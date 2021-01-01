@@ -1,0 +1,99 @@
+----- Creating a StatefulSet / Deployment -----
+
+1) Container info
+	-apiVersion
+	-type (deployment, stateful set etc)
+	-name
+	-docker image
+	-labels
+	-replicas
+	-expose ports
+	-environment variables
+	
+2) Connection to other containers/apps
+	-secrets
+	-services
+	-load balancers
+	-protocols (TCP, UDP etc)
+	-ip address to provide services
+	
+3) configmaps
+
+4) namespace
+
+5) rbac
+
+6) storage
+	-persistent volumes + different types of PV
+	-persistent volume claims
+	-storage class
+	-how much storage will be allocated
+
+7) strategy
+	-RollingUpdate
+		-maxSurge
+		-maxUnavailable
+
+8) livenessProbe
+
+9) resource limits
+	-CPU
+	-Memory
+	
+10) what containers in each pod
+
+11) troubleshooting (kubectl describe <component>, kubectl logs <pod name>)
+
+12) 
+	
+----- Overview -----
+
+1) showing the current state of the system
+	-what other containers and clusters are running
+	-their ips
+	-the ports that are in use
+	-storage use
+	
+2) kubernetes dashboard (minikube dashboard)
+
+3) rabbitmq management for each message broker
+
+4) see the (yaml) files created by the web tool
+	-statefulset / deployment
+	-configmap
+	-secret
+	-services
+	-rbac
+	-namespace
+
+----- Consumers -----
+
+1) Endpoint
+
+2) secrets / credentials to connect to the:
+	-rabbitmq server
+	-DB
+	-cenote 
+	-etc....
+
+3) Assert queue(s)
+	-name
+	-durable: True/False (True probably)
+	-exclusive: True/False
+	
+4) Assert exchange(s)
+	-name
+	-type
+	-durable: True/False (True probably)
+	
+5) queue - exchange binding
+	-key
+	
+6) filtering method
+	-exact name match / regex matching 
+	
+7) Prefetch number (max number of messages that can be pushed to the consumer)
+	
+8) ConsumerFunction
+	-ack/nack
+	-functionality
