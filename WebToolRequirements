@@ -97,3 +97,9 @@
 8) ConsumerFunction
 	-ack/nack
 	-functionality
+	
+----- Suggestions -----
+
+1) Provide different default profiles of functionality
+
+2) Provide access to the parameters of each section
