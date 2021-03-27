@@ -1,0 +1,26 @@
+======================== FRONTEND ========================
+
+https://www.designmycodes.com/react/reactjs-redux-nodejs-mongodb-jwt-authentication-tutorial.html
+
+======================== BACKEND ========================
+
+https://www.designmycodes.com/examples/node-js-mongodb-auth-jwt.html
+
+=============== BACKEND - express-generator ===============
+
+https://daveceddia.com/create-react-app-express-backend/
+
+npx express-generator express-gen-backend --view=pug
+
+make sure to install the dependencies:
+$ cd express-gen-backend
+$ npm install
+
+Start up the app by running this:
+$ PORT=5000 node bin/www
+
+On Linux, run the app with this command:
+$ DEBUG=express-gen-backend:* npm start
+
+// de xerw giati ta dyo afta einai diaforetika. ti kanei to kathena?
+
