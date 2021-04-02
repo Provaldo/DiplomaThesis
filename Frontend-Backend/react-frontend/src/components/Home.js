@@ -2,6 +2,12 @@ import React, { Component } from "react";
 
 export default class Home extends Component {
   render() {
-    return <div>Home Component</div>;
+    return (
+      <div className="App">
+        <header className="App-header">
+          <div>Home Component</div>
+        </header>
+      </div>
+    );
   }
 }
