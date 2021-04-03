@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
@@ -27,28 +27,22 @@ import AuthenticatedContent from "./components/AuthenticatedContent";
 //   }
 // }
 
-class App extends Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <Router>
-          <div>
-            <Navbar />
-            <Route exact path="/" component={Home} />
-            {/* <div className="container"> */}
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <Route
-              exact
-              path="/authenticated"
-              component={AuthenticatedContent}
-            />
-            {/* </div> */}
-          </div>
-        </Router>
-      </Provider>
-    );
-  }
+function App() {
+  return (
+    <Provider store={store}>
+      <Router>
+        <div>
+          <Navbar />
+          <Route exact path="/" component={Home} />
+          {/* <div className="container"> */}
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/authenticated" component={AuthenticatedContent} />
+          {/* </div> */}
+        </div>
+      </Router>
+    </Provider>
+  );
 }
 
 export default App;
