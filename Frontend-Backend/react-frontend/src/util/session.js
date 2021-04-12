@@ -10,5 +10,7 @@ export const checkLoggedIn = async () => {
       },
     };
   }
+  console.log("User: ", user);
+  console.log("preloadedState: ", preloadedState);
   return preloadedState;
 };
