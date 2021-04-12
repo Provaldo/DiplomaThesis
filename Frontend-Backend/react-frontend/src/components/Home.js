@@ -1,16 +1,5 @@
 import React from "react";
-
-// export default class Home extends Component {
-//   render() {
-//     return (
-//       <div className="App">
-//         <header className="App-header">
-//           <div>Home Component</div>
-//         </header>
-//       </div>
-//     );
-//   }
-// }
+import "../App.css";
 
 const Home = () => {
   return (

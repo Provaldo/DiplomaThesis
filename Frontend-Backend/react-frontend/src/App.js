@@ -1,7 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+// import { Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
+import configureStore from "./store";
+import { AuthRoute, ProtectedRoute } from "./util/route";
 // import jwt_decode from "jwt-decode";
 // import setAuthToken from "./setAuthToken";
 // import { setCurrentUser, logoutUser } from "./actions/authentication";
@@ -27,6 +30,10 @@ import AuthenticatedContent from "./components/AuthenticatedContent";
 //   }
 // }
 
+// The two lines below are a more proper implementation (I think) that I found here: https://itnext.io/mastering-session-authentication-aa29096f6e22
+// let preloadedState = {};
+// const store = configureStore(preloadedState);
+
 function App() {
   return (
     <Provider store={store}>
@@ -35,9 +42,15 @@ function App() {
           <Navbar />
           <Route exact path="/" component={Home} />
           {/* <div className="container"> */}
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/authenticated" component={AuthenticatedContent} />
+          {/* <Route exact path="/register" component={Register} /> */}
+          <AuthRoute path="/register" component={Register} />
+          {/* <Route exact path="/login" component={Login} /> */}
+          <AuthRoute path="/login" component={Login} />
+          {/* <Route exact path="/authenticated" component={AuthenticatedContent} /> */}
+          <ProtectedRoute
+            path="/authenticated"
+            component={AuthenticatedContent}
+          />
           {/* </div> */}
         </div>
       </Router>
@@ -46,6 +59,22 @@ function App() {
 }
 
 export default App;
+
+// // FOR TESTING, remove before production
+// window.getState = store.getState;
+
+// TESTING THE NEWEST APP.JS
+// const App = () => (
+//   <>
+//     <Navbar />
+//     <Route exact path="/" component={Home} />
+//     <AuthRoute path="/register" component={Register} />
+//     <AuthRoute path="/login" component={Login} />
+//     <ProtectedRoute path="/authenticated" component={AuthenticatedContent} />
+//   </>
+// );
+
+// export default App;
 
 /*
 import logo from "./logo.svg";

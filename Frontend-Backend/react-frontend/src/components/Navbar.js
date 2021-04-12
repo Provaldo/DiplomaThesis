@@ -28,11 +28,10 @@ class Navbar extends Component {
         <button
           className="nav-link"
           onClick={this.onLogout.bind(this)}
-          style={
-            {
-              // borderWidth: "0",
-            }
-          }
+          style={{
+            borderWidth: "0",
+            paddingRight: 33,
+          }}
         >
           <img
             src={user.avatar}

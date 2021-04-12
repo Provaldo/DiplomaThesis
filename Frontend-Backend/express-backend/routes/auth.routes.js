@@ -1,4 +1,4 @@
-const { verifySignUp } = require("../middlewares");
+const { authSession, verifySignUp } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
 const sessions = require("client-sessions");
 const config = require("../config/auth.config.js");
@@ -42,4 +42,10 @@ module.exports = function (app) {
   );
 
   app.get("/api/auth/signout", controller.signout);
+
+  app.get(
+    "/api/auth/sessionCheck",
+    [authSession.verifySession],
+    controller.sessionCheck
+  );
 };

@@ -110,6 +110,8 @@ exports.signin = (req, res) => {
         username: user.username,
         email: user.email,
         roles: authorities,
+        rabbitmqServers: user.rabbitmqServers,
+        consumers: user.consumers,
         // accessToken: token,
       });
     });
@@ -118,4 +120,28 @@ exports.signin = (req, res) => {
 exports.signout = (req, res) => {
   // found that from https://blog.logrocket.com/securing-a-react-app/
   res.clearCookie("session").end();
+
+  // Or another implementation from https://itnext.io/mastering-session-authentication-aa29096f6e22
+  // try {
+  //   const session = req.session;
+  //   const user = session.userId;
+  //   if (user) {
+  //     session.destroy(err => {
+  //       if (err) throw (err);
+
+  //       res.clearCookie("session");
+  //       res.send(user);
+  //     });
+  //   } else {
+  //     throw new Error('Something went wrong');
+  //   }
+  // } catch (err) {
+  //  // res.status(422).send(parseError(err));
+  //  res.status(422).send(JSON.stringify(err, Object.getOwnPropertyNames(err)));
+  // }
+};
+
+exports.sessionCheck = (req, res) => {
+  const user = req.user;
+  res.send({ user });
 };

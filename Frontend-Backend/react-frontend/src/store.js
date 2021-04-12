@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware, compose } from "redux";
+// import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import rootReducer from "./reducers";
 
@@ -17,6 +18,7 @@ const inititalState = {};
 //   )
 // );
 
+// I was using this one until I found the last one below
 const store = createStore(
   rootReducer,
   inititalState,
@@ -36,3 +38,8 @@ const store = createStore(
 );
 
 export default store;
+
+// // This was a more proper implementation (I think) that I found here: https://itnext.io/mastering-session-authentication-aa29096f6e22
+// export default (function (preloadedState) {
+//   createStore(rootReducer, preloadedState, applyMiddleware(thunk));
+// });

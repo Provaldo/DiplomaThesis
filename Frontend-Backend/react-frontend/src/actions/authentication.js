@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_ERRORS, SET_CURRENT_USER } from "./types";
+import { GET_ERRORS, SET_CURRENT_USER, LOGOUT_CURRENT_USER } from "./types";
 // import setAuthToken from "../setAuthToken";
 // import jwt_decode from "jwt-decode";
 
@@ -29,7 +29,7 @@ export const loginUser = (user) => (dispatch) => {
       // setAuthToken(token);
       // const decoded = jwt_decode(token);
       // dispatch(setCurrentUser(decoded));
-      dispatch(setCurrentUser(res.data.id));
+      dispatch(setCurrentUser(res.data));
     })
     .catch((err) => {
       dispatch({
@@ -55,8 +55,10 @@ export const logoutUser = (history) => (dispatch) => {
   axios
     .get("/api/auth/signout")
     .then((res) => {
-      dispatch(setCurrentUser({}));
-      history.push("/login");
+      dispatch({ type: LOGOUT_CURRENT_USER });
+      // The following is probably not needed since after changing the state variable isAuthenticated to false,
+      // then we should be automatically redirected to /login.
+      // history.push("/login");
     })
     .catch((err) => {
       dispatch({
