@@ -6,6 +6,10 @@
 Frontend-Backend/.vscode/
 Frontend-Backend/express-gen-backend/
 Frontend-Backend/react-tutorials/
+3.rabbitmq-authn-authz.txt
+4.kubernetes-authn-authz.txt
+5.mongoDB-instructions.txt
+Questions.txt
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/node

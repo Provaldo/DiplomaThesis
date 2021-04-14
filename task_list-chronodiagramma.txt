@@ -1,0 +1,67 @@
+###### K8S CLUSTER ######
+
+1) cluster creation
+
+2) assigning roles and permissions
+
+3) 
+
+###### BACKEND ######
+
+1) communication with k8s API
+	-testing yaml files vs kubectl commands
+
+2) authentication API
+	-communication with Pod 2 (DB) and authentication of users
+
+3) rabbitmq server creation API
+	-k8s replication set # of Pod 1
+	-credentials and vhosts implementation
+
+4) URL to rabbitmq management UI API
+	-providing access to the management UI through an Ingress??
+
+5) consumer creation
+	-pod 3 with consumer process
+	-testing 1 central pod 3 with multiple processes vs many 		 small differentiated consumer pods
+	
+6) resources owned by user and their state
+
+###### FRONTEND ######
+
+1) login (authentication flow)
+
+2) rabbitmq server creation
+
+3) producing credentials and creating vhosts
+
+4) URL to rabbitmq management UI
+
+3) consumer creation
+
+###### RABBITMQ POD ######
+
+1) communication with backend
+
+2) definition files
+	-credentials vhosts etc
+	-networking
+	-exposing the management UI address:port for outside access
+
+###### DB POD ######
+
+1) Schema - model design for authn/authz
+
+2) Schema - model design for consumer data
+
+3) Persistent volumes + persistent volume claims
+
+4) communication with other pods
+
+5) communication with backend
+
+###### CONSUMER CREATION ######
+
+1) communication with backend
+
+2) topic, type, exchange details etc
