@@ -1,7 +1,0 @@
-1) Started here:
-https://minikube.sigs.k8s.io/docs/start/
-
-2) followed this link to here:
-https://minikube.sigs.k8s.io/docs/drivers/docker/
-
-3) from which I installed docker executing the steps in the corresponding notes file
