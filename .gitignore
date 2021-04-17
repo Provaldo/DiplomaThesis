@@ -6,10 +6,14 @@
 Frontend-Backend/.vscode/
 Frontend-Backend/express-gen-backend/
 Frontend-Backend/react-tutorials/
-3.rabbitmq-authn-authz.txt
-4.kubernetes-authn-authz.txt
-5.mongoDB-instructions.txt
-Questions.txt
+Notes/1.docker-installation-notes.txt
+Notes/2.minicube-installation.txt
+Notes/3.rabbitmq-authn-authz.txt
+Notes/4.kubernetes-authn-authz.txt
+Notes/5.mongoDB-instructions.txt
+Notes/Questions.txt
+Notes/SystemArchitecture.odg
+Notes/task_list-chronodiagramma.txt
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/node
