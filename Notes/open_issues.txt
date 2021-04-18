@@ -1,3 +1,5 @@
+11) Καλό θα ήταν να προσαρμόσω το Redux του frontend με βάση το πρότυπο Ducks όπως το έχει εδώ: https://www.youtube.com/watch?v=wcXTCG8zMhY&list=PLQg6GaokU5CyvExiaMgXP_BS5WWNBfZJN&index=13
+
 10) Να φτιάξω το frontend καλύτερα έτσι ώστε αν ο χρήστης βάζει κάποιο άκυρο URL να του εμφανίζεται κατάλληλο μήνυμα. Τώρα του εμφανίζει το Navbar και κενό από κάτω.
 
 9) Να δοκιμάσω την καινούρια συνάρτηση signout του backend που βρήκα και την έχω τώρα commented out

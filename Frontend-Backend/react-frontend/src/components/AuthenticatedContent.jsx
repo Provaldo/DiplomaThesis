@@ -3,6 +3,7 @@ import React from "react";
 import "./components.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { createProducer, createConsumer } from "../actions/rabbitmq.actions";
 
 const AuthenticatedContent = (props) => {
   // const [state, setState] = useState();
@@ -47,7 +48,11 @@ const AuthenticatedContent = (props) => {
             })}
           </li>
         </ul>
-        {/* <button>Add RabbitMQ Server</button> */}
+        <div>
+          <button onClick={props.createProducer}>Create Producer</button>
+          <button onClick={props.createConsumer}>Create Consumer</button>
+          {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
+        </div>
       </div>
     </div>
   );
@@ -57,11 +62,16 @@ AuthenticatedContent.propTypes = {
   // loginUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
+  createConsumer: PropTypes.func.isRequired,
+  createProducer: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   errors: state.errors,
+  rabbitmq: state.rabbitmq,
 });
 
-export default connect(mapStateToProps, {})(AuthenticatedContent);
+export default connect(mapStateToProps, { createProducer, createConsumer })(
+  AuthenticatedContent
+);

@@ -1,7 +1,5 @@
 const { authSession } = require("../middlewares");
 const controller = require("../controllers/user.controller");
-const sessions = require("client-sessions");
-const config = require("../config/auth.config.js");
 
 module.exports = function (app) {
   //   app.use(function (req, res, next) {

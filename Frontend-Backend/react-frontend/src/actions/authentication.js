@@ -29,7 +29,11 @@ export const loginUser = (user) => (dispatch) => {
       // setAuthToken(token);
       // const decoded = jwt_decode(token);
       // dispatch(setCurrentUser(decoded));
-      dispatch(setCurrentUser(res.data));
+      dispatch({
+        type: SET_CURRENT_USER,
+        payload: res.data,
+      });
+      // dispatch(setCurrentUser(res.data));
     })
     .catch((err) => {
       dispatch({
@@ -39,12 +43,12 @@ export const loginUser = (user) => (dispatch) => {
     });
 };
 
-export const setCurrentUser = (decoded) => {
-  return {
-    type: SET_CURRENT_USER,
-    payload: decoded,
-  };
-};
+// export const setCurrentUser = (decoded) => {
+//   return {
+//     type: SET_CURRENT_USER,
+//     payload: decoded,
+//   };
+// };
 
 export const logoutUser = (history) => (dispatch) => {
   // No need for that because I'm doing authentication by session cookies
