@@ -5,12 +5,12 @@ module.exports = function (app) {
   app.post(
     "/api/rabbitmq/user/producer",
     [authSession.verifySession],
-    controller.userProducer
+    controller.userRequestProducer
   );
 
   app.post(
     "/api/rabbitmq/user/consumer",
     [authSession.verifySession],
-    controller.userConsumer
+    controller.userRequestConsumer
   );
 };

@@ -52,6 +52,7 @@ const AuthenticatedContent = (props) => {
           <button onClick={props.createProducer}>Create Producer</button>
           <button onClick={props.createConsumer}>Create Consumer</button>
           {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
+          {props.errors && <h6>{props.errors.message}</h6>}
         </div>
       </div>
     </div>

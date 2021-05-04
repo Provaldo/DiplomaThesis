@@ -1,3 +1,7 @@
+13) Στην περίπτωση που το backend ειναι offline τότε και το frontend δε δειχνει τίποτα. Να το διορθώσω, τουλάχιστον να δείχνει ένα error message.
+
+12) Έκανα npm install amqplib στον φάκελο του express-backend ώστε να πειραματιστώ με ττη δημιουργία producers/consumers κατευθείαν από το backend. Όταν τελειώσω με τα πειράματα και αν μετακινήσω τη λειτουργικότητα σε άλλο μέρος να κάνω uninstall το amqplib από το backend.
+
 11) Καλό θα ήταν να προσαρμόσω το Redux του frontend με βάση το πρότυπο Ducks όπως το έχει εδώ: https://www.youtube.com/watch?v=wcXTCG8zMhY&list=PLQg6GaokU5CyvExiaMgXP_BS5WWNBfZJN&index=13
 
 10) Να φτιάξω το frontend καλύτερα έτσι ώστε αν ο χρήστης βάζει κάποιο άκυρο URL να του εμφανίζεται κατάλληλο μήνυμα. Τώρα του εμφανίζει το Navbar και κενό από κάτω.
