@@ -25,3 +25,5 @@ FROM nginx:1.19-alpine
 
 COPY --from=build-step /app/build /usr/share/nginx/html
 
+COPY default.conf /etc/nginx/conf.d
+

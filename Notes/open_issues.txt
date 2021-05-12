@@ -1,4 +1,6 @@
-13) Στην περίπτωση που το backend ειναι offline τότε και το frontend δε δειχνει τίποτα. Να το διορθώσω, τουλάχιστον να δείχνει ένα error message.
+14) Όταν γίνεται επιτυχώς logged in ένας user, οδηγείται στο view AuthenticatedContent /authenticated. Εάν προσπαθήσει να γράψει όμως στο URL localhost/authenticated αυτό δε λειτουργεί. Γιατί; Θα έπρεπε να συμβαίνει αυτό; Νομίζω όχι γιατί θέλουμε να έχουν σημασία τα URL μας.
+
+13) Στην περίπτωση που το backend ειναι offline τότε και το frontend δε δειχνει τίποτα. Να το διορθώσω, τουλάχιστον να δείχνει ένα error message. Γενικά δλδ να προσθέσω error handling για τις περιπτώσεις που δεν επιτυγχάνεται η σύνδεση με τη ΒΔ από το backend, όταν δεν επιτυγχάνεται η σύνδεση με το backend από το frontend, όταν το backend αποτυγχάνει να δημιουργήσει consumers ή rabbitmq servers κλπ.
 
 12) Έκανα npm install amqplib στον φάκελο του express-backend ώστε να πειραματιστώ με ττη δημιουργία producers/consumers κατευθείαν από το backend. Όταν τελειώσω με τα πειράματα και αν μετακινήσω τη λειτουργικότητα σε άλλο μέρος να κάνω uninstall το amqplib από το backend.
 
