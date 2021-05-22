@@ -3,7 +3,7 @@ var amqp = require("amqplib/callback_api");
 exports.userRequestProducer = (req, res) => {
   // VERSION 1
   // amqp.connect(
-  //   "amqp://guest:guest@192.168.49.2:30672",
+  // "amqp://guest:guest@192.168.49.2:30672",
   // VERSION 2
   // amqp.connect(
   //   "amqp://" +
@@ -26,93 +26,101 @@ exports.userRequestProducer = (req, res) => {
   // },
   // function (error0, connection) {
   // VERSION 4
-  amqp.connect("amqp://localhost", function (error0, connection) {
-    if (error0) {
-      throw error0;
-    }
-    connection.createChannel(function (error1, channel) {
-      if (error1) {
-        throw error1;
+  // amqp.connect("amqp://localhost", function (error0, connection) {
+  // VERSION 5
+  amqp.connect(
+    "amqp://guest:guest@rabbitmq:5672",
+    function (error0, connection) {
+      if (error0) {
+        throw error0;
       }
+      connection.createChannel(function (error1, channel) {
+        if (error1) {
+          throw error1;
+        }
 
-      var queue = "hello";
-      var msg = "Hello World!";
-      // test
-      var exchange = "test_exg";
-      var args = process.argv.slice(2);
-      var key = args[0];
+        var queue = "hello";
+        var msg = "Hello World!";
+        // test
+        var exchange = "test_exg";
+        var args = process.argv.slice(2);
+        var key = args[0];
 
-      // test
-      channel.assertExchange(exchange, "topic", {
-        durable: false,
+        // test
+        channel.assertExchange(exchange, "topic", {
+          durable: false,
+        });
+
+        channel.assertQueue(queue, {
+          durable: false,
+        });
+
+        // test
+        channel.bindQueue(queue, exchange, "#");
+        channel.publish(exchange, key, Buffer.from(JSON.stringify(msg)), {
+          correlationId: "correlationId",
+          replyTo: "q.queue",
+        });
+
+        // to restore
+        // channel.sendToQueue(queue, Buffer.from(msg));
+
+        console.log(" [x] Sent %s", msg);
       });
-
-      channel.assertQueue(queue, {
-        durable: false,
-      });
-
-      // test
-      channel.bindQueue(queue, exchange, "#");
-      channel.publish(exchange, key, Buffer.from(JSON.stringify(msg)), {
-        correlationId: "correlationId",
-        replyTo: "q.queue",
-      });
-
-      // to restore
-      // channel.sendToQueue(queue, Buffer.from(msg));
-
-      console.log(" [x] Sent %s", msg);
-    });
-    setTimeout(function () {
-      connection.close();
-      // process.exit(0);
-    }, 500);
-  });
+      setTimeout(function () {
+        connection.close();
+        // process.exit(0);
+      }, 500);
+    }
+  );
   res.status(200).send({ message: "Producer created." });
 };
 
 exports.userRequestConsumer = (req, res) => {
-  amqp.connect("amqp://localhost", function (error0, connection) {
-    // amqp.connect(
-    //   "amqp://guest:guest@192.168.49.2:30672",
-    //   function (error0, connection) {
-    if (error0) {
-      throw error0;
-    }
-    connection.createChannel(function (error1, channel) {
-      if (error1) {
-        throw error1;
+  amqp.connect(
+    "amqp://guest:guest@rabbitmq:5672",
+    function (error0, connection) {
+      // amqp.connect(
+      //   "amqp://guest:guest@192.168.49.2:30672",
+      //   function (error0, connection) {
+      if (error0) {
+        throw error0;
       }
-
-      var queue = "hello";
-
-      // test
-      var exchange = "test_exg";
-      // test
-      channel.assertExchange(exchange, "topic", { durable: false });
-
-      channel.assertQueue(queue, {
-        durable: false,
-      });
-
-      // test
-      channel.bindQueue(queue, exchange, "#");
-
-      console.log(
-        " [*] Waiting for messages in %s. To exit press CTRL+C",
-        queue
-      );
-
-      channel.consume(
-        queue,
-        function (msg) {
-          console.log(" [x] Received %s", msg.content.toString());
-        },
-        {
-          noAck: true,
+      connection.createChannel(function (error1, channel) {
+        if (error1) {
+          throw error1;
         }
-      );
-    });
-  });
+
+        var queue = "hello";
+
+        // test
+        var exchange = "test_exg";
+        // test
+        channel.assertExchange(exchange, "topic", { durable: false });
+
+        channel.assertQueue(queue, {
+          durable: false,
+        });
+
+        // test
+        channel.bindQueue(queue, exchange, "#");
+
+        console.log(
+          " [*] Waiting for messages in %s. To exit press CTRL+C",
+          queue
+        );
+
+        channel.consume(
+          queue,
+          function (msg) {
+            console.log(" [x] Received %s", msg.content.toString());
+          },
+          {
+            noAck: true,
+          }
+        );
+      });
+    }
+  );
   res.status(200).send({ message: "Consumer created." });
 };

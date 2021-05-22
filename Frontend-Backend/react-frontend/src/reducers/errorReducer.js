@@ -17,6 +17,11 @@ export default (function (state = initialState, { type, payload }) {
   Object.freeze(state);
   switch (type) {
     case GET_ERRORS:
+      // This check below doesn't seem like good practice since we should have
+      // the logic separate from this file.
+      if (payload.message && payload.message == "No valid session exists!") {
+        dispatch({ type: LOGOUT_CURRENT_USER });
+      }
       return payload;
     // when we receive our current user, we also clear errors. This is often how you’ll see different actions triggering different parts of the state.
     case SET_CURRENT_USER:

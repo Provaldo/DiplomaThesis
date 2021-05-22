@@ -1,12 +1,17 @@
 import axios from "axios";
-import { GET_MESSAGES, GET_ERRORS } from "./types";
+import {
+  GET_RMQ_MESSAGES,
+  GET_ERRORS,
+  CLEAR_RMQ_MESSAGES,
+  LOGOUT_CURRENT_USER,
+} from "./types";
 
 export const createProducer = () => (dispatch) => {
   axios
     .post("/api/rabbitmq/user/producer")
     .then((res) => {
       dispatch({
-        type: GET_MESSAGES,
+        type: GET_RMQ_MESSAGES,
         payload: res.data,
       });
     })
@@ -14,6 +19,9 @@ export const createProducer = () => (dispatch) => {
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data,
+      });
+      dispatch({
+        type: CLEAR_RMQ_MESSAGES,
       });
     });
 };
@@ -23,7 +31,7 @@ export const createConsumer = () => (dispatch) => {
     .post("/api/rabbitmq/user/consumer")
     .then((res) => {
       dispatch({
-        type: GET_MESSAGES,
+        type: GET_RMQ_MESSAGES,
         payload: res.data,
       });
     })
@@ -31,6 +39,9 @@ export const createConsumer = () => (dispatch) => {
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data,
+      });
+      dispatch({
+        type: CLEAR_RMQ_MESSAGES,
       });
     });
 };

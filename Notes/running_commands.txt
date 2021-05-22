@@ -1,0 +1,31 @@
+########################### DOCKER SYSTEM ###########################
+
+# frontend
+docker run -it --name frontend -d -p 80:80 --net=mynetwork frontend:latest
+
+# backend
+docker run -it --name backend -d -p 5000:5000 --net=mynetwork backend:latest
+
+# mongodb
+docker run -it --name mongodb -d --net=mynetwork mongo:latest
+
+# rabbitmq
+docker run -it --name rabbitmq -p 5672:5672 -p 15672:15672 --net=mynetwork rabbitmq:3-management 
+
+########################### KUBERNETES SYSTEM ###########################
+
+# minikube
+minikube start
+minikube addons enable dashboard
+minikube addons enable metrics-server
+
+# mongodb
+kubectl apply -f kubernetes/mongo-secret.yaml
+kubectl apply -f kubernetes/mongo-deployment.yaml
+
+# mongo-express
+kubectl apply -f kubernetes/mongo-express.yaml
+minikube service mongo-express-service 
+
+# backend
+

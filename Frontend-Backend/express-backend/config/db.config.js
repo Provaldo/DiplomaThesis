@@ -5,4 +5,7 @@ module.exports = {
   // HOST: process.env.
   PORT: 27017,
   DB: "test2",
+  DB_USERNAME: process.env.DB_USERNAME,
+  DB_PASSWORD: process.env.DB_PASSWORD,
+  DB_SERVER: process.env.DB_SERVER,
 };

@@ -20,16 +20,24 @@ const db = require("./models");
 const Role = db.role;
 
 db.mongoose
-  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    // `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`,
+    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Successfully connect to MongoDB.");
     initial();
   })
   .catch((err) => {
-    console.error("Connection error", err);
+    console.error(
+      `username: ${dbConfig.DB_USERNAME}\npassword: ${dbConfig.DB_PASSWORD}`,
+      err
+    );
+    // console.error("Connection error", err);
     process.exit();
   });
 
