@@ -24,8 +24,16 @@ kubectl apply -f kubernetes/mongo-secret.yaml
 kubectl apply -f kubernetes/mongo-deployment.yaml
 
 # mongo-express
+kubectl apply -f kubernetes/mongo-configmap.yaml
 kubectl apply -f kubernetes/mongo-express.yaml
 minikube service mongo-express-service 
 
 # backend
+kubectl apply -f kubernetes/mongo-configmap.yaml	# this should already exist for the mongo-express app
+kubectl apply -f kubernetes/backend-deployment.yaml
+
+# frontend
+kubectl apply -f kubernetes/frontend-configmap.yaml
+kubectl apply -f kubernetes/frontend-deployment.yaml
+minikube service frontend-service
 

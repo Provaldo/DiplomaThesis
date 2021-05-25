@@ -20,6 +20,12 @@ export const createProducer = () => (dispatch) => {
         type: GET_ERRORS,
         payload: err.response.data,
       });
+      if (
+        err.response.data.message &&
+        err.response.data.message === "No valid session exists!"
+      ) {
+        dispatch({ type: LOGOUT_CURRENT_USER });
+      }
       dispatch({
         type: CLEAR_RMQ_MESSAGES,
       });
@@ -40,6 +46,12 @@ export const createConsumer = () => (dispatch) => {
         type: GET_ERRORS,
         payload: err.response.data,
       });
+      if (
+        err.response.data.message &&
+        err.response.data.message === "No valid session exists!"
+      ) {
+        dispatch({ type: LOGOUT_CURRENT_USER });
+      }
       dispatch({
         type: CLEAR_RMQ_MESSAGES,
       });
