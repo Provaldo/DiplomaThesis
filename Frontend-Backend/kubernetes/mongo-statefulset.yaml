@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  labels:
+    app: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  # serviceName: mongodb-cluster
+  serviceName: mongo-headless
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongodb
+          image: mongo:4.4.6-bionic
+          command:
+            - mongod
+            - "--bind_ip_all"
+            - "--replSet"
+            - rs0
+          ports:
+            - containerPort: 27017
+              name: client
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard # or maybe it is local or maybe hostpath. if I don't define a storageClassName it will automatically take the default storage class.
+        resources:
+          requests:
+            storage: 200Mi # 1Gi
+  # volumes:
+  #   - name: data
+  #     persistentVolumeClaim:
+  #       claimName: example-claim

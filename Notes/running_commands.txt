@@ -37,3 +37,54 @@ kubectl apply -f kubernetes/frontend-configmap.yaml
 kubectl apply -f kubernetes/frontend-deployment.yaml
 minikube service frontend-service
 
+# using a stateful set for the DB instead of the deployment
+kubectl apply -f kubernetes/mongo-headless-service.yaml
+kubectl apply -f kubernetes/mongo-statefulset.yaml
+
+kubectl exec -it mongo-0 -- mongo
+rs.initiate()
+var cfg = rs.conf()
+cfg.members[0].host="mongo-0.mongo-headless:27017"
+rs.reconfig(cfg)
+rs.status()
+rs.add("mongo-1.mongo-headless:27017")
+rs.add("mongo-2.mongo-headless:27017")
+rs.status()
+
+# Now we can connect to the mongo replica set only from inside our cluster. To show how to
+# do that we run another mongo container and we connect from there:
+kubectl run mongo --rm -it --image mongo -- sh
+# The command to connect to the replica set is the following (we can omit the port 27017 since this is the default port):
+mongo mongodb://mongo-0.mongo-headless:27017,mongo-1.mongo-headless:27017,mongo-2.mongo-headless:27017
+rs.status()
+# or do it in one command like this:
+mongo mongodb://mongo-0.mongo-headless,mongo-1.mongo-headless,mongo-2.mongo-headless --eval 'rs.status()' | grep name
+
+# To add a new member to the mongo replica set we do this:
+kubectl scale sts mongo --replicas 4
+kubectl exec -it mongo-0 -- mongo
+rs.add("mongo-3.mongo-headless:27017")
+
+# To remove a member from the mongo seplica set we do this:
+kubectl scale sts mongo --replicas 3
+# and then manually remove the last member from the replica set:
+kubectl exec -it mongo-0 -- mongo
+rs.remove("mongo-3.mongo-headless:27017")
+
+
+########################### interesting command ###########################
+
+watch -x kubectl get all
+watch -x kubectl get all -o wide
+
+# when deleting a stateful set it might not delete all the pods. so it is considered better
+# to first scale the stateful set to 0 replicas and then delete the stateful set.
+kubectl scale sts nginx-sts --replicas=0
+kubectl delete sts nginx-sts
+
+# deleting a stateful set won't delete the persistent volume claims
+kubectl delete pvc --all
+kubectl delete pv --all
+
+
+

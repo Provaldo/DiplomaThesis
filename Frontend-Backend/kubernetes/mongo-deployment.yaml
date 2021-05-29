@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo
+          image: mongo:4.4.6-bionic
           resources:
             limits:
               memory: "128Mi"

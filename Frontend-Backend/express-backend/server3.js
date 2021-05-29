@@ -22,7 +22,7 @@ const Role = db.role;
 db.mongoose
   .connect(
     // `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`,
-    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`,
+    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`, // Afto leitourgei stin ylopoihsh tis DB eite ws Deployment, eite ws StatefulSet. Apla prepei na allazei to mongo-configmap.yaml
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
