@@ -64,8 +64,8 @@ exports.signin = (req, res) => {
   let errors = {};
 
   User.findOne({
-    // username: req.body.username,
-    email: req.body.email,
+    username: req.body.username,
+    // email: req.body.email,
   })
     .populate("roles", "-__v")
     .exec((err, user) => {
@@ -76,7 +76,7 @@ exports.signin = (req, res) => {
 
       if (!user) {
         // return res.status(404).send({ message: "User Not found." });
-        errors.email = "User not found";
+        errors.username = "User not found";
         return res.status(404).json(errors);
       }
 

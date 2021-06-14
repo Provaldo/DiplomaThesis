@@ -71,8 +71,19 @@ kubectl scale sts mongo --replicas 3
 kubectl exec -it mongo-0 -- mongo
 rs.remove("mongo-3.mongo-headless:27017")
 
+# creating the DB user that the backend will authenticate with
+# first connect to the mongo container from another container and execute:
+use admin
+db.auth("username", "password")
+db.createUser(
+  {
+    user: "backendUser",
+    pwd: "supersecretpassword",
+    roles: [ { role: "readWrite", db: "test2" } ]
+)
 
-########################### interesting command ###########################
+
+########################### interesting commands ###########################
 
 watch -x kubectl get all
 watch -x kubectl get all -o wide
@@ -86,5 +97,14 @@ kubectl delete sts nginx-sts
 kubectl delete pvc --all
 kubectl delete pv --all
 
+# find the current user in mongodb
+db.runCommand({connectionStatus: 1})
+# terminate the authenticated connection of the user in MongoDB.
+db.runCommand( { logout: 1 } )
 
+# find all users of a database
+db.runCommand( { usersInfo: 1 } )
+
+# remove a db user "user2"
+db.runCommand( { dropUser: "user2" } )
 

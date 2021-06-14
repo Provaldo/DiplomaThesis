@@ -10,6 +10,20 @@ module.exports = function validateRegisterInput(data) {
     ? data.password_confirm
     : "";
 
+  if (
+    Validator.equals(data.username, "admin") ||
+    Validator.equals(data.username, "config") ||
+    Validator.equals(data.username, "local") ||
+    Validator.equals(data.username, "auth") ||
+    Validator.equals(data.username, "test")
+  ) {
+    errors.username = `Username can't be any of "admin", "config", "local", "auth" or "test". You sneaky son of a mother.`;
+  }
+
+  if (!Validator.isAlphanumeric(data.username)) {
+    errors.username = "Username must contain only alphanumeric characters";
+  }
+
   if (!Validator.isLength(data.username, { min: 2, max: 30 })) {
     errors.username = "Username must be between 2 to 30 chars";
   }

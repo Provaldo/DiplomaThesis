@@ -40,6 +40,10 @@ spec:
                 configMapKeyRef:
                   name: mongodb-configmap
                   key: database_url
+            - name: DB_PORT
+              value: "27017"
+            - name: DB_DBNAME
+              value: "auth"
 ---
 apiVersion: v1
 kind: Service

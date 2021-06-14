@@ -1,9 +1,7 @@
-const { authSession, verifySignUp } = require("../middlewares");
+const { authSession, verifySignUp, verifySignIn } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
 const sessions = require("client-sessions");
 const config = require("../config/auth.config.js");
-
-const verifySignIn = require("../middlewares/verifySignIn");
 
 module.exports = function (app) {
   //   app.use(function (req, res, next) {

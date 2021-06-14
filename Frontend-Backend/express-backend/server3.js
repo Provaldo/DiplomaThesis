@@ -22,10 +22,15 @@ const Role = db.role;
 db.mongoose
   .connect(
     // `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`,
-    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`, // Afto leitourgei stin ylopoihsh tis DB eite ws Deployment, eite ws StatefulSet. Apla prepei na allazei to mongo-configmap.yaml
+    // `mongodb://${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/${dbConfig.DB_DBNAME}`, // Afto leitourgei stin ylopoihsh tis DB eite ws Deployment, eite ws StatefulSet. Apla prepei na allazei to mongo-configmap.yaml
+    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/${dbConfig.DB_DBNAME}`,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      auth: { authSource: "admin" },
+      user: dbConfig.DB_USERNAME,
+      pass: dbConfig.DB_PASSWORD,
+      // useMongoClient: true,
     }
   )
   .then(() => {
@@ -33,11 +38,7 @@ db.mongoose
     initial();
   })
   .catch((err) => {
-    console.error(
-      `username: ${dbConfig.DB_USERNAME}\npassword: ${dbConfig.DB_PASSWORD}`,
-      err
-    );
-    // console.error("Connection error", err);
+    console.error("Connection error", err);
     process.exit();
   });
 
@@ -89,6 +90,7 @@ app.get("/", (req, res) => {
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/rabbitmq.routes")(app);
+require("./routes/test.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;

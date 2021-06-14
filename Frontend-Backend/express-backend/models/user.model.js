@@ -12,21 +12,21 @@ const User = mongoose.model(
         ref: "Role",
       },
     ],
-    rabbitmqServers: [
-      {
-        name: String,
-        createdAt: Date,
-        id: String,
-      },
-    ], //not sure about the rabbitmwServers object if it's needed
-    consumers: [
-      {
-        name: String,
-        createdAt: Date,
-        id: String,
-        topic: String,
-      },
-    ],
+    rabbitmqServer: {
+      name: String,
+      createdAt: Date,
+      id: String,
+      address: String,
+    },
+    // consumers: [
+    //   {
+    //     name: String,
+    //     createdAt: Date,
+    //     id: String,
+    //     topic: String,
+    //     address: String,
+    //   },
+    // ],
   })
 );
 

@@ -4,6 +4,7 @@ import "./components.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createProducer, createConsumer } from "../actions/rabbitmq.actions";
+import { testFunction } from "../actions/test.actions";
 
 const AuthenticatedContent = (props) => {
   // const [state, setState] = useState();
@@ -14,14 +15,8 @@ const AuthenticatedContent = (props) => {
   //   }
   // }, [props.auth.isAuthenticated, props.history]);
 
-  const {
-    id,
-    username,
-    email,
-    roles,
-    rabbitmqServers,
-    consumers,
-  } = props.auth.user;
+  const { id, username, email, roles, rabbitmqServers, consumers } =
+    props.auth.user;
 
   return (
     <div className="App">
@@ -37,15 +32,17 @@ const AuthenticatedContent = (props) => {
           <li>roles: {roles}</li>
           <li>
             rabbitmqServers:{" "}
-            {rabbitmqServers.map((rmq) => {
-              return `name: ${rmq.name}, id: ${rmq.id}`;
-            })}
+            {rabbitmqServers &&
+              rabbitmqServers.map((rmq) => {
+                return `name: ${rmq.name}, id: ${rmq.id}`;
+              })}
           </li>
           <li>
             consumers:{" "}
-            {consumers.map((consumer) => {
-              return `name: ${consumer.name}, topic: ${consumer.topic}, id: ${consumer.id}`;
-            })}
+            {consumers &&
+              consumers.map((consumer) => {
+                return `name: ${consumer.name}, topic: ${consumer.topic}, id: ${consumer.id}`;
+              })}
           </li>
         </ul>
         <div>
@@ -53,6 +50,7 @@ const AuthenticatedContent = (props) => {
           <button onClick={props.createConsumer}>Create Consumer</button>
           {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
           {props.errors && <h6>{props.errors.message}</h6>}
+          <button onClick={props.testFunction}>Test Button</button>
         </div>
       </div>
     </div>
@@ -65,6 +63,7 @@ AuthenticatedContent.propTypes = {
   errors: PropTypes.object.isRequired,
   createConsumer: PropTypes.func.isRequired,
   createProducer: PropTypes.func.isRequired,
+  testFunction: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -73,6 +72,8 @@ const mapStateToProps = (state) => ({
   rabbitmq: state.rabbitmq,
 });
 
-export default connect(mapStateToProps, { createProducer, createConsumer })(
-  AuthenticatedContent
-);
+export default connect(mapStateToProps, {
+  createProducer,
+  createConsumer,
+  testFunction,
+})(AuthenticatedContent);

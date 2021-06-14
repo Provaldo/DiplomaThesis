@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: mongodb-configmap
 data:
-  # database_url: mongodb-service  # this is used for the service pointing to the mongodb-deployment
-  database_url: mongo-headless # this is used for the headless service pointing to the mongodb-statefulset
+  database_url: mongodb-service # this is used for the service pointing to the mongodb-deployment
+  # database_url: mongo-headless # this is used for the headless service pointing to the mongodb-statefulset

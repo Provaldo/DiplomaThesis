@@ -1,0 +1,3 @@
+1) The first user that gets created in the mongodb container has root access. This user will be used by the system administrator to handle the DB. If that is a dangerous practice it should be changed accordingly.
+
+2) The user that is used by the backend to authenticate to the DB must be created in the DB before the backend container is created. The username/password must be given to the backend container through the mongo-secret.yaml file.

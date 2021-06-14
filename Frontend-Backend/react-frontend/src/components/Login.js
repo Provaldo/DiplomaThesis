@@ -5,7 +5,11 @@ import { loginUser } from "../actions/authentication";
 import classnames from "classnames";
 
 const Login = (props) => {
-  const [state, setState] = useState({ email: "", password: "", errors: {} });
+  const [state, setState] = useState({
+    username: "",
+    password: "",
+    errors: {},
+  });
 
   const isMounted = useRef(false);
 
@@ -16,7 +20,7 @@ const Login = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const user = {
-      email: state.email,
+      username: state.username,
       password: state.password,
     };
     props.loginUser(user);
@@ -66,17 +70,17 @@ const Login = (props) => {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Username"
             className={classnames("form-control form-control-lg", {
-              "is-invalid": errors.email,
+              "is-invalid": errors.username,
             })}
-            name="email"
+            name="username"
             onChange={handleInputChange}
-            value={state.email}
+            value={state.username}
           />
-          {errors.email && (
-            <div className="invalid-feedback">{errors.email}</div>
+          {errors.username && (
+            <div className="invalid-feedback">{errors.username}</div>
           )}
         </div>
         <div className="form-group">
