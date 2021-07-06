@@ -1,14 +1,12 @@
 const MongoClient = require("mongodb").MongoClient;
+const db = require("../models");
+const User = db.user;
 const test = require("assert");
 
 const dbConfig = require("../config/db.config");
 
-exports.test = (req, res) => {
-  // Connection url
+exports.signup = (req, res) => {
   const url = `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}`;
-
-  // Database Name
-  // const dbName = `${dbConfig.DB_DBNAME}`;
 
   MongoClient.connect(
     url,
@@ -23,69 +21,179 @@ exports.test = (req, res) => {
         return;
       }
 
-      console.log("successfully connected to MongoDB from testFunction");
-
       client
-        .db("mple")
+        .db(req.body.username)
         .addUser(
-          "mple",
-          "password",
-          { roles: [{ role: "readWrite", db: "mple" }] },
+          req.body.username,
+          req.body.password,
+          { roles: [{ role: "readWrite", db: req.body.username }] },
           function (err, result) {
             if (err) {
               res.status(500).send({ message: err });
-              console.log('User "mple" creation error: ', err);
+              console.log(`User "${req.body.username}" creation error: `, err);
               // ProcessingInstruction.exit(); // I don't know what this does
             }
 
-            console.log('Successfully created user "mple": ', result);
-            res.status(200).send({ message: "ok" });
+            res
+              .status(200)
+              .send({ message: "User was registered successfully!" });
 
             client.close();
           }
         );
-
-      // // Use the admin database for the operation
-
-      // const adminDb = client.db(dbName).admin();
-
-      // // List all the available databases
-
-      // adminDb.listDatabases(function (err, dbs) {
-      //   if (err) {
-      //     res.status(500).send({ message: err });
-      //     console.log("List Databases error", err);
-      //     // ProcessingInstruction.exit(); // I don't know what this does
-      //     return;
-      //   }
-
-      //   test.strictEqual(null, err);
-
-      //   test.ok(dbs.databases.length > 0);
-
-      //   console.log("Databases are: ", dbs);
-
-      //   // client.close();
-      // });
-
-      // Create a user on db admin with read access to test2 db
-
-      // adminDb.addUser(
-      //   "user2",
-      //   "password",
-      //   { roles: [{ role: "read", db: "test2" }] },
-      //   function (err, result) {
-      //     if (err) {
-      //       res.status(500).send({ message: err });
-      //       console.log("User2 creation error: ", err);
-      //       // ProcessingInstruction.exit(); // I don't know what this does
-      //     }
-
-      //     console.log("Successfully created user2: ", result);
-      //     res.status(200).send({ message: "ok" });
-      //     client.close();
-      //   }
-      // );
     }
   );
 };
+
+exports.registerRMQServer = (req, res) => {
+  var rabbitmqServer = {
+    deploymentName: req.rabbitmqServer.deploymentName,
+    labels: req.rabbitmqServer.labels,
+    podName: "",
+    creationTimestamp: req.rabbitmqServer.creationTimestamp,
+    id: req.rabbitmqServer.id,
+    namespace: req.rabbitmqServer.ns,
+    managementAddressNodePort: req.rabbitmqServer.nodePort,
+    managementAddress: req.rabbitmqServer.address,
+  };
+
+  User.findByIdAndUpdate(
+    req.session.userId,
+    {
+      rabbitmqServer: rabbitmqServer,
+    },
+    { new: true, runValidators: true },
+    (err, doc) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        console.log(
+          "DB error while updating RMQServer info in user's document: ",
+          err
+        );
+        // ProcessingInstruction.exit(); // I don't know what this does
+        return;
+      } else {
+        console.log("Updated DB document: ", doc);
+        res.status(200).send({
+          message:
+            "RabbitMQ Server and related Services were created successfully. DB updated.",
+          serverData: rabbitmqServer,
+        });
+      }
+    }
+  );
+};
+
+exports.removeRMQServer = (req, res) => {
+  User.findByIdAndUpdate(
+    req.session.userId,
+    {
+      rabbitmqServer: {},
+    },
+    { new: true, runValidators: true },
+    (err, doc) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        console.log(
+          "DB error while updating RMQServer info in user's document: ",
+          err
+        );
+        // ProcessingInstruction.exit(); // I don't know what this does
+        return;
+      } else {
+        console.log("Updated DB document: ", doc);
+        res.status(200).send({
+          message:
+            "RabbitMQ Server and related Services were deleted successfully. DB updated.",
+        });
+      }
+    }
+  );
+};
+
+// exports.test = (req, res) => {
+//   // Connection url
+//   const url = `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}`;
+
+//   // Database Name
+//   // const dbName = `${dbConfig.DB_DBNAME}`;
+
+//   MongoClient.connect(
+//     url,
+//     {
+//       useUnifiedTopology: true,
+//     },
+//     function (err, client) {
+//       if (err) {
+//         res.status(500).send({ message: err });
+//         console.log("Connection error", err);
+//         // ProcessingInstruction.exit(); // I don't know what this does
+//         return;
+//       }
+
+//       console.log("successfully connected to MongoDB from testFunction");
+
+//       client
+//         .db("mple")
+//         .addUser(
+//           "mple",
+//           "password",
+//           { roles: [{ role: "readWrite", db: "mple" }] },
+//           function (err, result) {
+//             if (err) {
+//               res.status(500).send({ message: err });
+//               console.log('User "mple" creation error: ', err);
+//               // ProcessingInstruction.exit(); // I don't know what this does
+//             }
+
+//             console.log('Successfully created user "mple": ', result);
+//             res.status(200).send({ message: "ok" });
+
+//             client.close();
+//           }
+//         );
+
+// // Use the admin database for the operation
+
+// const adminDb = client.db(dbName).admin();
+
+// // List all the available databases
+
+// adminDb.listDatabases(function (err, dbs) {
+//   if (err) {
+//     res.status(500).send({ message: err });
+//     console.log("List Databases error", err);
+//     // ProcessingInstruction.exit(); // I don't know what this does
+//     return;
+//   }
+
+//   test.strictEqual(null, err);
+
+//   test.ok(dbs.databases.length > 0);
+
+//   console.log("Databases are: ", dbs);
+
+//   // client.close();
+// });
+
+// Create a user on db admin with read access to test2 db
+
+// adminDb.addUser(
+//   "user2",
+//   "password",
+//   { roles: [{ role: "read", db: "test2" }] },
+//   function (err, result) {
+//     if (err) {
+//       res.status(500).send({ message: err });
+//       console.log("User2 creation error: ", err);
+//       // ProcessingInstruction.exit(); // I don't know what this does
+//     }
+
+//     console.log("Successfully created user2: ", result);
+//     res.status(200).send({ message: "ok" });
+//     client.close();
+//   }
+// );
+//     }
+//   );
+// };

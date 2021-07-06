@@ -20,9 +20,18 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* justify-content: center; */
+  justify-content: flex-start;
+  text-align: start;
   font-size: calc(10px + 2vmin);
   color: white;
-  border-color: white;
-  border-width: 2em;
+  border-style: solid;
+  border-color: red;
+  border-width: 2px;
+}
+
+.RMQ-server-container {
+  justify-content: flex-start;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
 }

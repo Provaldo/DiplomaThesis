@@ -1,7 +1,10 @@
-const { authSession, verifySignUp, verifySignIn } = require("../middlewares");
-const controller = require("../controllers/auth.controller");
+const { authSession, verifySignUp } = require("../middlewares");
+const authController = require("../controllers/auth.controller");
+const dbController = require("../controllers/db.controller");
 const sessions = require("client-sessions");
 const config = require("../config/auth.config.js");
+const validateLoginInput = require("../validation/login");
+const validateRegisterInput = require("../validation/register");
 
 module.exports = function (app) {
   //   app.use(function (req, res, next) {
@@ -26,24 +29,21 @@ module.exports = function (app) {
   app.post(
     "/api/auth/signup",
     [
-      verifySignUp.inputValidationSignup,
+      validateRegisterInput,
       verifySignUp.checkDuplicateUsernameOrEmail,
       verifySignUp.checkRolesExisted,
     ],
-    controller.signup
+    authController.signup,
+    dbController.signup
   );
 
-  app.post(
-    "/api/auth/signin",
-    [verifySignIn.inputValidationSignin],
-    controller.signin
-  );
+  app.post("/api/auth/signin", [validateLoginInput], authController.signin);
 
-  app.get("/api/auth/signout", controller.signout);
+  app.get("/api/auth/signout", authController.signout);
 
   app.get(
     "/api/auth/sessionCheck",
     [authSession.verifySession],
-    controller.sessionCheck
+    authController.sessionCheck
   );
 };

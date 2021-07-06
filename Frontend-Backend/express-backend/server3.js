@@ -22,15 +22,14 @@ const Role = db.role;
 db.mongoose
   .connect(
     // `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.PORT}/${dbConfig.DB}`,
-    // `mongodb://${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/${dbConfig.DB_DBNAME}`, // Afto leitourgei stin ylopoihsh tis DB eite ws Deployment, eite ws StatefulSet. Apla prepei na allazei to mongo-configmap.yaml
-    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/${dbConfig.DB_DBNAME}`,
+    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/${dbConfig.DB_DBNAME}`, // Afto leitourgei stin ylopoihsh tis DB eite ws Deployment, eite ws StatefulSet. Apla prepei na allazei to mongo-configmap.yaml
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       auth: { authSource: "admin" },
       user: dbConfig.DB_USERNAME,
       pass: dbConfig.DB_PASSWORD,
-      // useMongoClient: true,
+      // useMongoClient: true, // WARNING: The `useMongoClient` option is no longer necessary in mongoose 5.x, please remove it.
     }
   )
   .then(() => {

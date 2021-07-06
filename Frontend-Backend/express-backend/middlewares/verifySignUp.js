@@ -55,6 +55,8 @@ checkRolesExisted = (req, res, next) => {
   next();
 };
 
+// I removed this function below, adjusted a bit the validation/register.js file and used that one directly instead.
+// So this function is now kinda useless.
 // addition from https://www.designmycodes.com/react/reactjs-redux-nodejs-mongodb-jwt-authentication-tutorial.html
 const validateRegisterInput = require("../validation/register");
 

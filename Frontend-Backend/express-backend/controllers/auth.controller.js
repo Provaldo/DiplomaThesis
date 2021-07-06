@@ -4,7 +4,7 @@ const Role = db.role;
 
 const bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
+exports.signup = (req, res, next) => {
   const user = new User({
     username: req.body.username,
     email: req.body.email,
@@ -35,7 +35,8 @@ exports.signup = (req, res) => {
               return;
             }
 
-            res.send({ message: "User was registered successfully!" });
+            // res.send({ message: "User was registered successfully!" });
+            next();
           });
         }
       );
@@ -53,7 +54,8 @@ exports.signup = (req, res) => {
             return;
           }
 
-          res.send({ message: "User was registered successfully!" });
+          // res.send({ message: "User was registered successfully!" });
+          next();
         });
       });
     }
@@ -110,7 +112,7 @@ exports.signin = (req, res) => {
         username: user.username,
         email: user.email,
         roles: authorities,
-        rabbitmqServers: user.rabbitmqServers,
+        rabbitmqServer: user.rabbitmqServer,
         consumers: user.consumers,
         // accessToken: token,
       });

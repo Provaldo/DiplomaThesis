@@ -1,0 +1,16 @@
+# This was found in https://www.youtube.com/watch?v=ZxC6FwEc9WQ.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-volume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce # the volume can be mounted as read-write by a single node
+  persistentVolumeReclaimPolicy: Recycle # default value
+  storageClassName: standard
+  hostPath:
+    # path: "/mnt/data"
+    path: "/data"
+    # path: "/home/provaldo/Documents/Υλικό Μαθημάτων ΤΗΜΜΥ/DIPLOMATIKI/DiplomaThesis/Notes/DB_data"

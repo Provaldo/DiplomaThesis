@@ -1,7 +1,10 @@
 const Validator = require("validator");
 const isEmpty = require("./is-empty");
 
-module.exports = function validateRegisterInput(data) {
+// this was used when this function was called from the middlewares/verifySignUp.js file
+// module.exports = function validateRegisterInput(data) {
+module.exports = function validateRegisterInput(req, res, next) {
+  const data = req.body;
   let errors = {};
   data.username = !isEmpty(data.username) ? data.username : "";
   data.email = !isEmpty(data.email) ? data.email : "";
@@ -29,7 +32,7 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (Validator.isEmpty(data.username)) {
-    errors.username = "Username field is required";
+    errors.username = "Username is required";
   }
 
   if (!Validator.isEmail(data.email)) {
@@ -41,7 +44,7 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
-    errors.password = "Password must have 6 chars";
+    errors.password = "Password must be between 6 and 30 characters";
   }
 
   if (Validator.isEmpty(data.password)) {
@@ -49,7 +52,7 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (!Validator.isLength(data.password_confirm, { min: 6, max: 30 })) {
-    errors.password_confirm = "Password must have 6 chars";
+    errors.password_confirm = "Password must be between 6 and 30 characters";
   }
 
   if (!Validator.equals(data.password, data.password_confirm)) {
@@ -60,8 +63,15 @@ module.exports = function validateRegisterInput(data) {
     errors.password_confirm = "Password is required";
   }
 
-  return {
-    errors,
-    isValid: isEmpty(errors),
-  };
+  // this was used when this function was called from the middlewares/verifySignUp.js file
+  // return {
+  //   errors,
+  //   isValid: isEmpty(errors),
+  // };
+
+  if (isEmpty(errors)) {
+    next();
+  } else {
+    return res.status(400).json(errors);
+  }
 };

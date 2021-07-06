@@ -1,4 +1,9 @@
-import { SET_CURRENT_USER, LOGOUT_CURRENT_USER } from "../actions/types";
+import {
+  SET_CURRENT_USER,
+  LOGOUT_CURRENT_USER,
+  CREATE_RMQ_SERVER,
+  DELETE_RMQ_SERVER,
+} from "../actions/types";
 import isEmpty from "../is-empty";
 
 const _nullUser = {
@@ -7,7 +12,7 @@ const _nullUser = {
   username: null,
   email: null,
   roles: null,
-  rabbitmqServers: null,
+  rabbitmqServer: null,
   consumers: null,
 };
 
@@ -47,6 +52,16 @@ export default (function (state = initialState, { type, payload }) {
         ...state,
         isAuthenticated: false,
         user: _nullUser,
+      };
+    case CREATE_RMQ_SERVER:
+      return {
+        ...state,
+        user: { ...state.user, rabbitmqServer: payload.serverData },
+      };
+    case DELETE_RMQ_SERVER:
+      return {
+        ...state,
+        user: { ...state.user, rabbitmqServer: {} },
       };
     default:
       return state;

@@ -3,7 +3,7 @@ import { GET_ERRORS } from "./types";
 
 export const testFunction = () => (dispatch) => {
   axios
-    .get("api/testFunction")
+    .get("/api/testFunction")
     .then(() => {})
     .catch((err) => {
       dispatch({
