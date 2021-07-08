@@ -1,4 +1,3 @@
-const controller = require("../controllers/rabbitmq.controller");
 const { authSession } = require("../middlewares");
 
 module.exports = function (app) {
