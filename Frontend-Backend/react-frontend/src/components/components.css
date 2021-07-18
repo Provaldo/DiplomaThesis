@@ -35,3 +35,10 @@
   border-color: black;
   border-width: 2px;
 }
+
+.RMQ-consumer-container {
+  justify-content: flex-start;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+}

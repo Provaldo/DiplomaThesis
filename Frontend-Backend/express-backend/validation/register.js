@@ -27,6 +27,11 @@ module.exports = function validateRegisterInput(req, res, next) {
     errors.username = "Username must contain only alphanumeric characters";
   }
 
+  if (!Validator.isLowercase(data.username)) {
+    errors.username =
+      "Username must contain only lowercase characters (don't hate me hate rabbitmq. jk blame me)";
+  }
+
   if (!Validator.isLength(data.username, { min: 2, max: 30 })) {
     errors.username = "Username must be between 2 to 30 chars";
   }

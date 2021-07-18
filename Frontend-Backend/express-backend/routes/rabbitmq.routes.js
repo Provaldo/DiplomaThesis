@@ -1,12 +1,14 @@
-const { authSession } = require("../middlewares");
+const { authSession, verifyConsumer } = require("../middlewares");
 const rmqController = require("../controllers/rabbitmq.controller");
 const {
+  rmqSecret,
   rmqDeployment,
   rmqIntService,
   rmqExtService,
+  rmqConsumer,
 } = require("../controllers/rabbitmq");
 const dbController = require("../controllers/db.controller");
-const inputValidationRMQServerCreation = require("../validation/rmqs_request");
+const rmqRequestValidator = require("../validation/rmq_requests");
 
 module.exports = function (app) {
   app.post(
@@ -16,17 +18,33 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/api/rabbitmq/user/consumer",
+    "/api/rabbitmq/user/consumerCreate",
     [authSession.verifySession],
-    rmqController.userRequestConsumer
+    rmqRequestValidator.validateRMQConsumerRequestInput,
+    verifyConsumer.checkDuplicateConsumer,
+    rmqConsumer.createConsumerDeployment,
+    dbController.registerConsumer
   );
 
   app.post(
+    "/api/rabbitmq/user/consumerDelete",
+    [authSession.verifySession],
+    rmqConsumer.deleteConsumerDeployment,
+    dbController.removeConsumer
+  );
+
+  // app.delete(
+  //   "/api/rabbitmq/user/consumerDeleteAll",
+  //   [authSession.verifySession],
+  //   rmqConsumer.deleteConsumerDeployment,
+  //   dbController.removeConsumer
+  // );
+
+  app.post(
     "/api/rabbitmq/user/createRMQServer",
-    [authSession.verifySession, inputValidationRMQServerCreation],
-    // rmqController.deploymentCreator,
-    // rmqController.internalServiceCreator,
-    // rmqController.externalServiceCreator,
+    [authSession.verifySession],
+    rmqRequestValidator.validateRMQServerRequestInput,
+    rmqSecret.secretCreator,
     rmqDeployment.deploymentCreator,
     rmqIntService.internalServiceCreator,
     rmqExtService.externalServiceCreator,
@@ -36,9 +54,7 @@ module.exports = function (app) {
   app.post(
     "/api/rabbitmq/user/deleteRMQServer",
     [authSession.verifySession],
-    // rmqController.deleteRMQServerDeployment,
-    // rmqController.deleteInternalService,
-    // rmqController.deleteExternalService,
+    rmqSecret.deleteRMQSecret,
     rmqDeployment.deleteRMQServerDeployment,
     rmqIntService.deleteInternalService,
     rmqExtService.deleteExternalService,

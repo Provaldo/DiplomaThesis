@@ -101,16 +101,19 @@ externalServiceCreator = (req, res, next) => {
   k8sApi
     .createNamespacedService(namespace, externalServiceObject)
     .then((response) => {
-      console.log(
-        "The External-Service-creation API response.body.spec.ports.nodePort is: ",
-        response.body.spec.ports[0].nodePort
-      );
+      // console.log(
+      //   "The External-Service-creation API response.body.spec.ports.nodePort is: ",
+      //   response.body.spec.ports[0].nodePort
+      // );
       req.rabbitmqServer.nodePort = response.body.spec.ports[0].nodePort;
       req.rabbitmqServer.address = response.body.spec.clusterIP + ":15672";
-      console.log(
-        "The ip address of the RMQserver is: ",
-        req.rabbitmqServer.address
-      );
+      req.rabbitmqServer.IP = response.body.spec.clusterIP;
+      req.rabbitmqServer.port = 15672;
+
+      // console.log(
+      //   "The ip address of the RMQserver is: ",
+      //   req.rabbitmqServer.address
+      // );
       next();
     })
     .catch((err) => {

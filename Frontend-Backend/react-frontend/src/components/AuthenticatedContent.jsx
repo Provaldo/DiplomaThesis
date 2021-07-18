@@ -8,6 +8,7 @@ import {
   deleteRMQServer,
   createProducer,
   createConsumer,
+  deleteConsumer,
 } from "../actions/rabbitmq.actions";
 import { testFunction } from "../actions/test.actions";
 import classnames from "classnames";
@@ -17,6 +18,9 @@ const AuthenticatedContent = (props) => {
     rmq_username: props.auth.user.username,
     rmq_password: "",
     rmqServerExists: false,
+    rmqConsumerExists: false,
+    rmqConsumerName: "",
+    rmqConsumerTopic: "",
     errors: {},
   });
 
@@ -45,8 +49,11 @@ const AuthenticatedContent = (props) => {
     props.auth.user;
 
   useEffect(() => {
-    // This is just a test of whether the object 'rabbitmqServer' is an empty object or not
-    if (rabbitmqServer.deploymentName) {
+    if (
+      typeof rabbitmqServer !== "undefined" &&
+      rabbitmqServer !== null &&
+      Object.keys(rabbitmqServer).length !== 0
+    ) {
       setState((s) => {
         return { ...s, rmqServerExists: true };
       });
@@ -56,6 +63,22 @@ const AuthenticatedContent = (props) => {
       });
     }
   }, [rabbitmqServer]);
+
+  useEffect(() => {
+    if (
+      typeof consumers !== "undefined" &&
+      consumers !== null &&
+      Object.keys(consumers).length !== 0
+    ) {
+      setState((s) => {
+        return { ...s, rmqConsumerExists: true };
+      });
+    } else {
+      setState((s) => {
+        return { ...s, rmqConsumerExists: false };
+      });
+    }
+  }, [consumers]);
 
   const handleInputChange = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -67,7 +90,29 @@ const AuthenticatedContent = (props) => {
       rmq_username: state.rmq_username,
       rmq_password: state.rmq_password,
     };
+    setState((s) => {
+      return { ...s, rmq_password: "" };
+    });
     props.createRMQServer(credentials);
+  };
+
+  const onRMQConsumerCreationRequest = (e) => {
+    e.preventDefault();
+    const consumerData = {
+      rmqConsumerName: state.rmqConsumerName,
+      rmqConsumerTopic: state.rmqConsumerTopic,
+    };
+    setState((s) => {
+      return { ...s, rmqConsumerName: "", rmqConsumerTopic: "" };
+    });
+    props.createConsumer(consumerData);
+  };
+
+  const onRMQConsumerDeletionRequest = (rmqConsumerName) => {
+    const consumerData = {
+      rmqConsumerName,
+    };
+    props.deleteConsumer(consumerData);
   };
 
   const { errors } = state;
@@ -83,26 +128,31 @@ const AuthenticatedContent = (props) => {
           <li>username: {username}</li>
           <li>email: {email}</li>
           <li>roles: {roles}</li>
+          {/* ###################################################################################################################
+###########################                                                                   #########################
+###########################                       RABBITMQ SERVER                             #########################
+###########################                                                                   #########################
+####################################################################################################################### */}
           <li className="RMQ-server-container">
             <div>rabbitmqServer: </div>
             <div>
-              {rabbitmqServer.deploymentName &&
+              {state.rmqServerExists &&
                 `name: ${rabbitmqServer.deploymentName}`}
             </div>
             <div>
-              {rabbitmqServer.creationTimestamp &&
+              {state.rmqServerExists &&
                 `created at: ${rabbitmqServer.creationTimestamp}`}
             </div>
             <div>
-              {rabbitmqServer.managementAddress &&
-                `address: ${rabbitmqServer.managementAddress}`}
+              {state.rmqServerExists &&
+                `address to receive messages: ${rabbitmqServer.managementAddressIP}:5672`}
             </div>
-            <div>
-              {rabbitmqServer.managementAddressNodePort &&
+            {/* <div>
+              {state.rmqServerExists &&
                 `nodePort: ${rabbitmqServer.managementAddressNodePort}`}
-            </div>
+            </div> */}
             <div>
-              {rabbitmqServer.managementAddress && (
+              {state.rmqServerExists && (
                 <a
                   href={`http://${rabbitmqServer.managementAddress}`}
                   target="_blank"
@@ -174,17 +224,90 @@ const AuthenticatedContent = (props) => {
               </button>
             )}
           </li>
-          <li>
-            consumers:{" "}
-            {consumers &&
-              consumers.map((consumer) => {
-                return `name: ${consumer.name}, topic: ${consumer.topic}, id: ${consumer.id}`;
-              })}
-          </li>
+          {/* ###################################################################################################################
+###########################                                                                   #########################
+###########################                       CONSUMERS                                   #########################
+###########################                                                                   #########################
+####################################################################################################################### */}
+          {state.rmqServerExists && (
+            <li lassName="RMQ-consumer-container">
+              <div>consumers: </div>
+              {state.rmqConsumerExists &&
+                consumers.map((consumer) => {
+                  return (
+                    <div>
+                      <div>{`-name: ${consumer.name}`}</div>
+                      <ul>
+                        <li>{`topic: ${consumer.topic}`}</li>
+                        <li>{`created at: ${consumer.creationTimestamp}`}</li>
+                      </ul>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() =>
+                          onRMQConsumerDeletionRequest(consumer.name)
+                        }
+                      >
+                        Delete Consumer
+                      </button>
+                    </div>
+                  );
+                })}
+              <form onSubmit={onRMQConsumerCreationRequest}>
+                <h6>Request RabbitMQ Consumer: </h6>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Consumer Name"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqConsumerName,
+                    })}
+                    name="rmqConsumerName"
+                    onChange={handleInputChange}
+                    value={state.rmqConsumerName}
+                  />
+                  {errors.rmqConsumerName && (
+                    <div className="invalid-feedback">
+                      {errors.rmqConsumerName}
+                    </div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Consumer Topic"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqConsumerTopic,
+                    })}
+                    name="rmqConsumerTopic"
+                    onChange={handleInputChange}
+                    value={state.rmqConsumerTopic}
+                  />
+                  {errors.rmqConsumerTopic && (
+                    <div className="invalid-feedback">
+                      {errors.rmqConsumerTopic}
+                    </div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={
+                      !(
+                        Boolean(state.rmqConsumerName) &&
+                        Boolean(state.rmqConsumerTopic)
+                      ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
+                    }
+                  >
+                    Create RabbitMQ Server
+                  </button>
+                </div>
+              </form>
+            </li>
+          )}
         </ul>
         <div>
           <button onClick={props.createProducer}>Create Producer</button>
-          <button onClick={props.createConsumer}>Create Consumer</button>
           {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
           {errors.message && <h6>{errors.message}</h6>}
           <button onClick={props.testFunction}>Test Button</button>
@@ -201,6 +324,7 @@ AuthenticatedContent.propTypes = {
   createRMQServer: PropTypes.func.isRequired,
   deleteRMQServer: PropTypes.func.isRequired,
   createConsumer: PropTypes.func.isRequired,
+  deleteConsumer: PropTypes.func.isRequired,
   createProducer: PropTypes.func.isRequired,
   testFunction: PropTypes.func.isRequired,
 };
@@ -216,5 +340,6 @@ export default connect(mapStateToProps, {
   deleteRMQServer,
   createProducer,
   createConsumer,
+  deleteConsumer,
   testFunction,
 })(AuthenticatedContent);

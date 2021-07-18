@@ -6,7 +6,7 @@ const serverExists = async (namespace, username) => {
   const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
 
   var pretty = "true";
-  var labelSelector = `owner=${username}`;
+  var labelSelector = `tag=rabbitmq-${username}`;
 
   try {
     var apiResponse = await k8sApi.listNamespacedDeployment(
@@ -81,7 +81,11 @@ deploymentCreator = (req, res, next) => {
     kind: "Deployment",
     metadata: {
       name: `rabbitmq-${req.user.username}`,
-      labels: { app: "rabbitmq-server", owner: req.user.username },
+      labels: {
+        app: "rabbitmq-server",
+        tag: `rabbitmq-${req.user.username}`,
+        owner: req.user.username,
+      },
     },
     spec: {
       selector: {
@@ -107,11 +111,23 @@ deploymentCreator = (req, res, next) => {
                 {
                   // Setting the default user and password
                   name: "RABBITMQ_DEFAULT_USER",
-                  value: req.body.rmq_username,
+                  // value: req.body.rmq_username,
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: `rmq-credentials-${req.user.username}-secret`,
+                      key: `rmq-credentials-username`,
+                    },
+                  },
                 },
                 {
                   name: "RABBITMQ_DEFAULT_PASS",
-                  value: req.body.rmq_password,
+                  // value: req.body.rmq_password,
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: `rmq-credentials-${req.user.username}-secret`,
+                      key: `rmq-credentials-password`,
+                    },
+                  },
                 },
                 // // Setting default vhost
                 // RABBITMQ_DEFAULT_VHOST: "",
@@ -198,7 +214,7 @@ deploymentCreator = (req, res, next) => {
         .createNamespacedDeployment(namespace, deploymentObject)
         .then((response) => {
           // console.log(
-          //   "The Deployment-creation API response.body is: ",
+          //   "The RMQ-Server Deployment-creation API response.body is: ",
           //   response.body
           // );
           const {
@@ -224,7 +240,7 @@ deploymentCreator = (req, res, next) => {
           return;
         });
     } else if (exists == 1) {
-      res.status(404).send({
+      res.status(409).send({
         message:
           "Deployment creation API call failed. RabbitMQ server already exists for this user.",
       });

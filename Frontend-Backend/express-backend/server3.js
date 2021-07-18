@@ -80,11 +80,6 @@ function initial() {
 // #####################################################################################
 // #####################################################################################
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to designmycodes application." });
-});
-
 // routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);

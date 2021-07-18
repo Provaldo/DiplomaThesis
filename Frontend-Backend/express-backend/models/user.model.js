@@ -21,16 +21,20 @@ const User = mongoose.model(
       namespace: String,
       managementAddressNodePort: Number,
       managementAddress: String,
+      managementAddressPort: Number,
+      managementAddressIP: String,
     },
-    // consumers: [
-    //   {
-    //     name: String,
-    //     createdAt: Date,
-    //     id: String,
-    //     topic: String,
-    //     address: String,
-    //   },
-    // ],
+    consumers: [
+      {
+        deploymentName: String,
+        labels: Object,
+        podName: String,
+        name: String,
+        namespace: String,
+        creationTimestamp: Date,
+        topic: String,
+      },
+    ],
   })
 );
 

@@ -32,6 +32,7 @@ exports.signup = (req, res) => {
               res.status(500).send({ message: err });
               console.log(`User "${req.body.username}" creation error: `, err);
               // ProcessingInstruction.exit(); // I don't know what this does
+              return;
             }
 
             res
@@ -55,6 +56,8 @@ exports.registerRMQServer = (req, res) => {
     namespace: req.rabbitmqServer.ns,
     managementAddressNodePort: req.rabbitmqServer.nodePort,
     managementAddress: req.rabbitmqServer.address,
+    managementAddressIP: req.rabbitmqServer.IP,
+    managementAddressPort: req.rabbitmqServer.port,
   };
 
   User.findByIdAndUpdate(
@@ -62,7 +65,7 @@ exports.registerRMQServer = (req, res) => {
     {
       rabbitmqServer: rabbitmqServer,
     },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true, useFindAndModify: false },
     (err, doc) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -73,7 +76,7 @@ exports.registerRMQServer = (req, res) => {
         // ProcessingInstruction.exit(); // I don't know what this does
         return;
       } else {
-        console.log("Updated DB document: ", doc);
+        // console.log("Updated DB document: ", doc);
         res.status(200).send({
           message:
             "RabbitMQ Server and related Services were created successfully. DB updated.",
@@ -90,7 +93,7 @@ exports.removeRMQServer = (req, res) => {
     {
       rabbitmqServer: {},
     },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true, useFindAndModify: false },
     (err, doc) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -101,10 +104,68 @@ exports.removeRMQServer = (req, res) => {
         // ProcessingInstruction.exit(); // I don't know what this does
         return;
       } else {
-        console.log("Updated DB document: ", doc);
+        // console.log("Updated DB document: ", doc);
         res.status(200).send({
           message:
             "RabbitMQ Server and related Services were deleted successfully. DB updated.",
+        });
+      }
+    }
+  );
+};
+
+exports.registerConsumer = (req, res) => {
+  User.findByIdAndUpdate(
+    req.session.userId,
+    {
+      $addToSet: { consumers: req.consumer },
+    },
+    { new: true, runValidators: true, useFindAndModify: false },
+    (err, doc) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        console.log(
+          "DB error while updating RQM Consumer info in user's document: ",
+          err
+        );
+        // ProcessingInstruction.exit(); // I don't know what this does
+        return;
+      } else {
+        // console.log("Updated DB document: ", doc);
+        res.status(200).send({
+          message: "RabbitMQ Consumer was created successfully. DB updated.",
+          consumerData: req.consumer,
+        });
+      }
+    }
+  );
+};
+
+exports.removeConsumer = (req, res) => {
+  User.findByIdAndUpdate(
+    req.session.userId,
+    {
+      $pull: {
+        consumers: {
+          deploymentName: `consumer-${req.user.username}-${req.body.rmqConsumerName}`,
+        },
+      },
+    },
+    { new: true, runValidators: true, useFindAndModify: false },
+    (err, doc) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        console.log(
+          "DB error while updating RMQ Consumer info in user's document: ",
+          err
+        );
+        // ProcessingInstruction.exit(); // I don't know what this does
+        return;
+      } else {
+        // console.log("Updated DB document: ", doc);
+        res.status(200).send({
+          message: "RabbitMQ Consumer was deleted successfully. DB updated.",
+          consumerName: req.body.rmqConsumerName,
         });
       }
     }

@@ -7,6 +7,8 @@ import {
   CLEAR_ERRORS,
   CREATE_RMQ_SERVER,
   DELETE_RMQ_SERVER,
+  CREATE_CONSUMER,
+  DELETE_CONSUMER,
 } from "./types";
 
 export const createRMQServer = (credentials) => (dispatch) => {
@@ -108,7 +110,7 @@ export const createProducer = () => (dispatch) => {
     });
 };
 
-export const createConsumer = () => (dispatch) => {
+export const createConsumer = (consumerData) => (dispatch) => {
   dispatch({
     type: CLEAR_RMQ_MESSAGES,
   });
@@ -117,10 +119,43 @@ export const createConsumer = () => (dispatch) => {
   });
 
   axios
-    .post("/api/rabbitmq/user/consumer")
+    .post("/api/rabbitmq/user/consumerCreate", consumerData)
     .then((res) => {
       dispatch({
-        type: GET_RMQ_MESSAGES,
+        type: CREATE_CONSUMER,
+        payload: res.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      });
+      if (
+        err.response.data.message &&
+        err.response.data.message === "No valid session exists!"
+      ) {
+        dispatch({ type: LOGOUT_CURRENT_USER });
+      }
+      dispatch({
+        type: CLEAR_RMQ_MESSAGES,
+      });
+    });
+};
+
+export const deleteConsumer = (consumerData) => (dispatch) => {
+  dispatch({
+    type: CLEAR_RMQ_MESSAGES,
+  });
+  dispatch({
+    type: CLEAR_ERRORS,
+  });
+
+  axios
+    .post("/api/rabbitmq/user/consumerDelete", consumerData)
+    .then((res) => {
+      dispatch({
+        type: DELETE_CONSUMER,
         payload: res.data,
       });
     })

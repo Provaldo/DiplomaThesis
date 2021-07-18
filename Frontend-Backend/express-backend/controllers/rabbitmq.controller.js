@@ -32,7 +32,8 @@ exports.userRequestProducer = (req, res) => {
   // amqp.connect("amqp://localhost", function (error0, connection) {
   // VERSION 5
   amqp.connect(
-    "amqp://guest:guest@rabbitmq:5672",
+    // "amqp://guest:guest@rabbitmq:5672",
+    `amqp://${req.user.username}:123456@rabbitmq-int-svc-mple:5672`,
     function (error0, connection) {
       if (error0) {
         throw error0;
@@ -51,11 +52,12 @@ exports.userRequestProducer = (req, res) => {
 
         // test
         channel.assertExchange(exchange, "topic", {
-          durable: false,
+          durable: true,
         });
 
         channel.assertQueue(queue, {
-          durable: false,
+          durable: true,
+          exclusive: true,
         });
 
         // test

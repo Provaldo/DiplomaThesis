@@ -1,7 +1,7 @@
 const Validator = require("validator");
 const isEmpty = require("./is-empty");
 
-module.exports = function validateRMQSrequestInput(req, res, next) {
+exports.validateRMQServerRequestInput = (req, res, next) => {
   const data = req.body;
   let errors = {};
   data.rmq_username = !isEmpty(data.rmq_username) ? data.rmq_username : "";
@@ -33,6 +33,45 @@ module.exports = function validateRMQSrequestInput(req, res, next) {
 
   if (Validator.isEmpty(data.rmq_password)) {
     errors.rmq_password = "Password is required";
+  }
+
+  if (isEmpty(errors)) {
+    next();
+  } else {
+    return res.status(400).json(errors);
+  }
+};
+
+exports.validateRMQConsumerRequestInput = (req, res, next) => {
+  const data = req.body;
+  let errors = {};
+  data.rmqConsumerName = !isEmpty(data.rmqConsumerName)
+    ? data.rmqConsumerName
+    : "";
+  data.rmqConsumerTopic = !isEmpty(data.rmqConsumerTopic)
+    ? data.rmqConsumerTopic
+    : "";
+
+  if (!Validator.isAlphanumeric(data.rmqConsumerName)) {
+    errors.rmqConsumerName =
+      "Consumer Name must contain only alphanumeric characters";
+  }
+
+  if (!Validator.isLowercase(data.rmqConsumerName)) {
+    errors.rmqConsumerName =
+      "Consumer Name must contain only lowercase characters (don't hate me hate rabbitmq. jk blame me)";
+  }
+
+  if (!Validator.isLength(data.rmqConsumerName, { min: 2, max: 10 })) {
+    errors.rmqConsumerName = "Consumer Name must be between 2 to 10 chars";
+  }
+
+  if (Validator.isEmpty(data.rmqConsumerName)) {
+    errors.rmqConsumerName = "Consumer Name is required";
+  }
+
+  if (Validator.isEmpty(data.rmqConsumerTopic)) {
+    errors.rmqConsumerTopic = "Topic is required";
   }
 
   if (isEmpty(errors)) {

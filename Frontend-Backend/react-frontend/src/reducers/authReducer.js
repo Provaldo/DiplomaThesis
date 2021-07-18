@@ -3,6 +3,9 @@ import {
   LOGOUT_CURRENT_USER,
   CREATE_RMQ_SERVER,
   DELETE_RMQ_SERVER,
+  CREATE_CONSUMER,
+  DELETE_CONSUMER,
+  DELETE_ALL_CONSUMERS,
 } from "../actions/types";
 import isEmpty from "../is-empty";
 
@@ -62,6 +65,44 @@ export default (function (state = initialState, { type, payload }) {
       return {
         ...state,
         user: { ...state.user, rabbitmqServer: {} },
+      };
+    case CREATE_CONSUMER:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          consumers: [...state.user.consumers, payload.consumerData],
+        },
+      };
+    case DELETE_CONSUMER:
+      let tempConsumersArray = state.user.consumers;
+      // The Array.prototype.findIndex() method returns an index in the array if an element
+      // in the array satisfies the provided testing function; otherwise, it will return -1,
+      // which indicates that no element passed the test. It executes the callback function
+      // once for every index in the array until it finds the one where callback returns true.
+      const index = tempConsumersArray.findIndex((element) => {
+        if (element.name === payload.consumerName) {
+          return true;
+        }
+      });
+      if (index > -1) {
+        tempConsumersArray.splice(index, 1);
+      } else {
+        console.log(
+          "Unknown consumer name: consumerName returned from backend is not found in user's list of consumers in frontend's object"
+        );
+      }
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          consumers: tempConsumersArray,
+        },
+      };
+    case DELETE_ALL_CONSUMERS:
+      return {
+        ...state,
+        user: { ...state.user, consumers: [] },
       };
     default:
       return state;

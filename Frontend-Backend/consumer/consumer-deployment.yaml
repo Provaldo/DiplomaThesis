@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-mple
+  labels:
+    app: consumer
+    owner: mple
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-mple
+  template:
+    metadata:
+      name: consumer-mple
+      labels:
+        app: consumer-mple
+    spec:
+      containers:
+        - name: consumer-mple
+          image: provaldo/dipl-consumer:k8s
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
+          env:
+            - name: RMQ_USERNAME
+              value: h
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: database_url
+            - name: DB_PORT
+              value: "27017"
+            - name: DB_DBNAME
+              value: "mple"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+      # protocol: TCP

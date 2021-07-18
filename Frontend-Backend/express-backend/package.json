@@ -13,6 +13,7 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.14.3",
     "amqplib": "^0.7.1",
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "client-sessions": "^0.8.0",
     "cors": "^2.8.5",
