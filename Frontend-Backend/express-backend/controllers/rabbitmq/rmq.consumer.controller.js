@@ -146,8 +146,16 @@ createConsumerDeployment = (req, res, next) => {
                   value: req.body.rmqConsumerName,
                 },
                 {
-                  name: "RMQ_TOPIC",
-                  value: req.body.rmqConsumerTopic,
+                  name: "RMQ_EXCHANGE_NAME",
+                  value: req.body.rmqExchangeName,
+                },
+                {
+                  name: "RMQ_ROUTING_KEY",
+                  value: req.body.rmqRoutingKey,
+                },
+                {
+                  name: "RMQ_LOGGING_CONDITIONS",
+                  value: req.body.rmqLoggingConditions,
                 },
                 {
                   name: "DB_USERNAME",
@@ -181,7 +189,7 @@ createConsumerDeployment = (req, res, next) => {
                   value: "27017",
                 },
                 {
-                  name: "DB_NAME",
+                  name: "DB_DBNAME",
                   value: `${req.user.username}`,
                 },
               ],
@@ -215,6 +223,17 @@ createConsumerDeployment = (req, res, next) => {
               namespace: ns,
               creationTimestamp,
             } = response.body.metadata;
+
+            const loggingConditions = JSON.parse(
+              req.body.rmqLoggingConditions
+            ).map((item) => {
+              return {
+                variable: item.variable,
+                operator: item.operator,
+                value: item.value,
+              };
+            });
+
             req.consumer = {
               deploymentName,
               labels,
@@ -222,7 +241,9 @@ createConsumerDeployment = (req, res, next) => {
               name: req.body.rmqConsumerName,
               ns,
               creationTimestamp,
-              topic: req.body.rmqConsumerTopic,
+              exchangeName: req.body.rmqExchangeName,
+              routingKey: req.body.rmqRoutingKey,
+              loggingConditions,
             };
             next();
           })

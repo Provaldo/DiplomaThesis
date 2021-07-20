@@ -48,8 +48,12 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
   data.rmqConsumerName = !isEmpty(data.rmqConsumerName)
     ? data.rmqConsumerName
     : "";
-  data.rmqConsumerTopic = !isEmpty(data.rmqConsumerTopic)
-    ? data.rmqConsumerTopic
+  data.rmqExchangeName = !isEmpty(data.rmqExchangeName)
+    ? data.rmqExchangeName
+    : "";
+  data.rmqRoutingKey = !isEmpty(data.rmqRoutingKey) ? data.rmqRoutingKey : "";
+  data.rmqLoggingConditions = !isEmpty(data.rmqLoggingConditions)
+    ? data.rmqLoggingConditions
     : "";
 
   if (!Validator.isAlphanumeric(data.rmqConsumerName)) {
@@ -70,8 +74,18 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
     errors.rmqConsumerName = "Consumer Name is required";
   }
 
-  if (Validator.isEmpty(data.rmqConsumerTopic)) {
-    errors.rmqConsumerTopic = "Topic is required";
+  if (Validator.isEmpty(data.rmqExchangeName)) {
+    errors.rmqExchangeName = "Exchange Name is required";
+  }
+
+  if (Validator.isEmpty(data.rmqRoutingKey)) {
+    errors.rmqRoutingKey = "Routing Key is required";
+  }
+
+  if (Validator.isEmpty(data.rmqLoggingConditions)) {
+    // !Array.isArray(data.rmqLoggingConditions) ||
+    // !data.rmqLoggingConditions.length {
+    errors.rmqLoggingConditions = "Logging Conditions are required";
   }
 
   if (isEmpty(errors)) {

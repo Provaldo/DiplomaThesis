@@ -12,6 +12,16 @@ import {
 } from "../actions/rabbitmq.actions";
 import { testFunction } from "../actions/test.actions";
 import classnames from "classnames";
+import Select from "react-select";
+
+const operatorOptions = [
+  { value: "=", label: "=" },
+  { value: ">", label: ">" },
+  { value: "<", label: "<" },
+  { value: "!=", label: "!=" },
+  { value: ">=", label: ">=" },
+  { value: "<=", label: "<=" },
+];
 
 const AuthenticatedContent = (props) => {
   const [state, setState] = useState({
@@ -20,7 +30,17 @@ const AuthenticatedContent = (props) => {
     rmqServerExists: false,
     rmqConsumerExists: false,
     rmqConsumerName: "",
-    rmqConsumerTopic: "",
+    rmqRoutingKey: "",
+    rmqExchangeName: "",
+    rmqLoggingConditionsVariable: "",
+    rmqLoggingConditionsOperator: "",
+    rmqLoggingConditionsValue: "",
+    rmqLoggingConditions: [],
+    rmqProducerExchangeName: "",
+    rmqProducerTopic: "",
+    rmqProducerMessageObject: {},
+    rmqProducerKey: "",
+    rmqProducerValue: "",
     errors: {},
   });
 
@@ -84,6 +104,12 @@ const AuthenticatedContent = (props) => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
 
+  const handleSelectChange = (selectedOption) => {
+    setState((s) => {
+      return { ...s, rmqLoggingConditionsOperator: selectedOption };
+    });
+  };
+
   const onRMQServerCreationRequest = (e) => {
     e.preventDefault();
     const credentials = {
@@ -100,10 +126,18 @@ const AuthenticatedContent = (props) => {
     e.preventDefault();
     const consumerData = {
       rmqConsumerName: state.rmqConsumerName,
-      rmqConsumerTopic: state.rmqConsumerTopic,
+      rmqRoutingKey: state.rmqRoutingKey,
+      rmqExchangeName: state.rmqExchangeName,
+      rmqLoggingConditions: JSON.stringify(state.rmqLoggingConditions),
     };
     setState((s) => {
-      return { ...s, rmqConsumerName: "", rmqConsumerTopic: "" };
+      return {
+        ...s,
+        rmqConsumerName: "",
+        rmqRoutingKey: "",
+        rmqExchangeName: "",
+        rmqLoggingConditions: [],
+      };
     });
     props.createConsumer(consumerData);
   };
@@ -113,6 +147,71 @@ const AuthenticatedContent = (props) => {
       rmqConsumerName,
     };
     props.deleteConsumer(consumerData);
+  };
+
+  const applyLoggingCondition = () => {
+    let tempArray = state.rmqLoggingConditions;
+    tempArray.push({
+      variable: state.rmqLoggingConditionsVariable,
+      operator: state.rmqLoggingConditionsOperator.value,
+      value: state.rmqLoggingConditionsValue,
+    });
+    setState((s) => {
+      return {
+        ...s,
+        rmqLoggingConditions: tempArray,
+        rmqLoggingConditionsVariable: "",
+        rmqLoggingConditionsOperator: "",
+        rmqLoggingConditionsValue: "",
+      };
+    });
+  };
+
+  const onRMQLoggingConditionDeletionRequest = (index) => {
+    let tempArray = state.rmqLoggingConditions;
+    tempArray.splice(index, 1);
+    setState((s) => {
+      return { ...s, rmqLoggingConditions: tempArray };
+    });
+  };
+
+  const onRMQProducerCreationRequest = (e) => {
+    e.preventDefault();
+    const producerData = {
+      rmqProducerTopic: state.rmqProducerTopic,
+      rmqProducerExchangeName: state.rmqProducerExchangeName,
+      rmqProducerMessageObject: state.rmqProducerMessageObject,
+    };
+    setState((s) => {
+      return {
+        ...s,
+        rmqProducerTopic: "",
+        rmqProducerExchangeName: "",
+        rmqProducerMessageObject: {},
+      };
+    });
+    props.createProducer(producerData);
+  };
+
+  const addProducerKeyValuePair = () => {
+    let tempObj = state.rmqProducerMessageObject;
+    tempObj[state.rmqProducerKey] = state.rmqProducerValue;
+    setState((s) => {
+      return {
+        ...s,
+        rmqProducerMessageObject: tempObj,
+        rmqProducerKey: "",
+        rmqProducerValue: "",
+      };
+    });
+  };
+
+  const onProducerKeyValuePairDeletionRequest = (key) => {
+    let tempObj = state.rmqProducerMessageObject;
+    delete tempObj[key];
+    setState((s) => {
+      return { ...s, rmqProducerMessageObject: tempObj };
+    });
   };
 
   const { errors } = state;
@@ -238,7 +337,16 @@ const AuthenticatedContent = (props) => {
                     <div>
                       <div>{`-name: ${consumer.name}`}</div>
                       <ul>
-                        <li>{`topic: ${consumer.topic}`}</li>
+                        <li>{`exchange name: ${consumer.exchangeName}`}</li>
+                        <li>{`routing key: ${consumer.routingKey}`}</li>
+                        <li>
+                          logging conditions:{" "}
+                          {consumer.loggingConditions.map((condition) => {
+                            return (
+                              <div>{`${condition.variable} ${condition.operator} ${condition.value}`}</div>
+                            );
+                          })}
+                        </li>
                         <li>{`created at: ${consumer.creationTimestamp}`}</li>
                       </ul>
                       <button
@@ -274,19 +382,117 @@ const AuthenticatedContent = (props) => {
                 <div className="form-group">
                   <input
                     type="text"
-                    placeholder="Consumer Topic"
+                    placeholder="Exchange Name"
                     className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.rmqConsumerTopic,
+                      "is-invalid": errors.rmqExchangeName,
                     })}
-                    name="rmqConsumerTopic"
+                    name="rmqExchangeName"
                     onChange={handleInputChange}
-                    value={state.rmqConsumerTopic}
+                    value={state.rmqExchangeName}
                   />
-                  {errors.rmqConsumerTopic && (
+                  {errors.rmqExchangeName && (
                     <div className="invalid-feedback">
-                      {errors.rmqConsumerTopic}
+                      {errors.rmqExchangeName}
                     </div>
                   )}
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Routing Key"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqRoutingKey,
+                    })}
+                    name="rmqRoutingKey"
+                    onChange={handleInputChange}
+                    value={state.rmqRoutingKey}
+                  />
+                  {errors.rmqRoutingKey && (
+                    <div className="invalid-feedback">
+                      {errors.rmqRoutingKey}
+                    </div>
+                  )}
+                </div>
+                {Boolean(state.rmqLoggingConditions.length) &&
+                  state.rmqLoggingConditions.map((condition, index) => {
+                    return (
+                      <div style={{ display: "flex", flexDirection: "row" }}>
+                        <div>{`${condition.variable} ${condition.operator} ${condition.value}`}</div>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() =>
+                            onRMQLoggingConditionDeletionRequest(index)
+                          }
+                        >
+                          Remove Logging Condition
+                        </button>
+                      </div>
+                    );
+                  })}
+                <h6>Log messages to the DB when:</h6>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Variable"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqLoggingConditionsVariable,
+                    })}
+                    name="rmqLoggingConditionsVariable"
+                    onChange={handleInputChange}
+                    value={state.rmqLoggingConditionsVariable}
+                  />
+                  {errors.rmqLoggingConditionsVariable && (
+                    <div className="invalid-feedback">
+                      {errors.rmqLoggingConditionsVariable}
+                    </div>
+                  )}
+                  <Select
+                    className={classnames("basic-single", {
+                      "is-invalid": errors.rmqLoggingConditionsOperator,
+                    })}
+                    classNamePrefix="select"
+                    defaultValue={operatorOptions[0]}
+                    isClearable="true"
+                    name="rmqLogginConditionsOperator"
+                    options={operatorOptions}
+                    onChange={handleSelectChange}
+                    value={state.rmqLoggingConditionsOperator}
+                  />
+                  {errors.rmqLoggingConditionsOperator && (
+                    <div className="invalid-feedback">
+                      {errors.rmqLoggingConditionsOperator}
+                    </div>
+                  )}
+                  <input
+                    type="text"
+                    placeholder="Value"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqLoggingConditionsValue,
+                    })}
+                    name="rmqLoggingConditionsValue"
+                    onChange={handleInputChange}
+                    value={state.rmqLoggingConditionsValue}
+                  />
+                  {errors.rmqLoggingConditionsValue && (
+                    <div className="invalid-feedback">
+                      {errors.rmqLoggingConditionsValue}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={
+                      !(
+                        Boolean(state.rmqLoggingConditionsVariable) &&
+                        Boolean(state.rmqLoggingConditionsOperator) &&
+                        Boolean(state.rmqLoggingConditionsValue)
+                      ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
+                    }
+                    onClick={applyLoggingCondition}
+                  >
+                    Apply Logging Condition
+                  </button>
                 </div>
                 <div className="form-group">
                   <button
@@ -295,23 +501,145 @@ const AuthenticatedContent = (props) => {
                     disabled={
                       !(
                         Boolean(state.rmqConsumerName) &&
-                        Boolean(state.rmqConsumerTopic)
+                        Boolean(state.rmqRoutingKey) &&
+                        Boolean(state.rmqExchangeName) &&
+                        Array.isArray(state.rmqLoggingConditions) &&
+                        state.rmqLoggingConditions.length
                       ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
                     }
                   >
-                    Create RabbitMQ Server
+                    Create Consumer
                   </button>
                 </div>
               </form>
             </li>
           )}
+          {/* ###################################################################################################################
+###########################                                                                   #########################
+###########################                       PRODUCER                                   #########################
+###########################                                                                   #########################
+####################################################################################################################### */}
+          <li>
+            <form onSubmit={onRMQProducerCreationRequest}>
+              <h6>Request RabbitMQ Producer: </h6>
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Producer Exchange Name"
+                  className={classnames("form-control form-control-lg", {
+                    "is-invalid": errors.rmqProducerExchangeName,
+                  })}
+                  name="rmqProducerExchangeName"
+                  onChange={handleInputChange}
+                  value={state.rmqProducerExchangeName}
+                />
+                {errors.rmqProducerExchangeName && (
+                  <div className="invalid-feedback">
+                    {errors.rmqProducerExchangeName}
+                  </div>
+                )}
+              </div>
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Producer Message Topic"
+                  className={classnames("form-control form-control-lg", {
+                    "is-invalid": errors.rmqProducerTopic,
+                  })}
+                  name="rmqProducerTopic"
+                  onChange={handleInputChange}
+                  value={state.rmqProducerTopic}
+                />
+                {errors.rmqProducerTopic && (
+                  <div className="invalid-feedback">
+                    {errors.rmqProducerTopic}
+                  </div>
+                )}
+              </div>
+              {Boolean(Object.keys(state.rmqProducerMessageObject).length) &&
+                Object.keys(state.rmqProducerMessageObject).map((key) => {
+                  return (
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <div>{`${key}: ${state.rmqProducerMessageObject[key]}`}</div>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() =>
+                          onProducerKeyValuePairDeletionRequest(key)
+                        }
+                      >
+                        Remove Key-Value Pair
+                      </button>
+                    </div>
+                  );
+                })}
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Message Key"
+                  className={classnames("form-control form-control-lg", {
+                    "is-invalid": errors.rmqProducerKey,
+                  })}
+                  name="rmqProducerKey"
+                  onChange={handleInputChange}
+                  value={state.rmqProducerKey}
+                />
+                {errors.rmqProducerKey && (
+                  <div className="invalid-feedback">
+                    {errors.rmqProducerKey}
+                  </div>
+                )}
+                <input
+                  type="text"
+                  placeholder="Message Value"
+                  className={classnames("form-control form-control-lg", {
+                    "is-invalid": errors.rmqProducerValue,
+                  })}
+                  name="rmqProducerValue"
+                  onChange={handleInputChange}
+                  value={state.rmqProducerValue}
+                />
+                {errors.rmqProducerValue && (
+                  <div className="invalid-feedback">
+                    {errors.rmqProducerValue}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={
+                    !(
+                      Boolean(state.rmqProducerKey) &&
+                      Boolean(state.rmqProducerValue)
+                    ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
+                  }
+                  onClick={addProducerKeyValuePair}
+                >
+                  Add Key-Value Pair to Producer Message
+                </button>
+              </div>
+              <div className="form-group">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={
+                    !(
+                      Boolean(state.rmqProducerExchangeName) &&
+                      Boolean(state.rmqProducerTopic) &&
+                      Boolean(
+                        Object.keys(state.rmqProducerMessageObject).length
+                      )
+                    ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
+                  }
+                >
+                  Create Producer
+                </button>
+              </div>
+            </form>
+            {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
+            {errors.message && <h6>{errors.message}</h6>}
+            <button onClick={props.testFunction}>Test Button</button>
+          </li>
         </ul>
-        <div>
-          <button onClick={props.createProducer}>Create Producer</button>
-          {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
-          {errors.message && <h6>{errors.message}</h6>}
-          <button onClick={props.testFunction}>Test Button</button>
-        </div>
       </div>
     </div>
   );

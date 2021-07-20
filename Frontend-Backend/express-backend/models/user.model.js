@@ -13,11 +13,11 @@ const User = mongoose.model(
       },
     ],
     rabbitmqServer: {
+      id: String,
       deploymentName: String,
       labels: Object,
       podName: String,
       creationTimestamp: Date,
-      id: String,
       namespace: String,
       managementAddressNodePort: Number,
       managementAddress: String,
@@ -32,7 +32,15 @@ const User = mongoose.model(
         name: String,
         namespace: String,
         creationTimestamp: Date,
-        topic: String,
+        routingKey: String,
+        exchangeName: String,
+        loggingConditions: [
+          {
+            variable: String,
+            operator: String,
+            value: String,
+          },
+        ],
       },
     ],
   })

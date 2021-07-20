@@ -9,6 +9,7 @@ import {
   DELETE_RMQ_SERVER,
   CREATE_CONSUMER,
   DELETE_CONSUMER,
+  CREATE_PRODUCER,
 } from "./types";
 
 export const createRMQServer = (credentials) => (dispatch) => {
@@ -77,7 +78,7 @@ export const deleteRMQServer = () => (dispatch) => {
     });
 };
 
-export const createProducer = () => (dispatch) => {
+export const createProducer = (producerData) => (dispatch) => {
   dispatch({
     type: CLEAR_RMQ_MESSAGES,
   });
@@ -86,10 +87,10 @@ export const createProducer = () => (dispatch) => {
   });
 
   axios
-    .post("/api/rabbitmq/user/producer")
+    .post("/api/rabbitmq/user/producer", producerData)
     .then((res) => {
       dispatch({
-        type: GET_RMQ_MESSAGES,
+        type: CREATE_PRODUCER,
         payload: res.data,
       });
     })

@@ -6,6 +6,7 @@ import {
   DELETE_RMQ_SERVER,
   CREATE_CONSUMER,
   DELETE_CONSUMER,
+  CREATE_PRODUCER,
 } from "../actions/types";
 
 const initialState = {};
@@ -17,6 +18,7 @@ export default (function (state = initialState, { type, payload }) {
     case DELETE_RMQ_SERVER:
     case CREATE_CONSUMER:
     case DELETE_CONSUMER:
+    case CREATE_PRODUCER:
     case GET_RMQ_MESSAGES:
       return {
         ...state,
