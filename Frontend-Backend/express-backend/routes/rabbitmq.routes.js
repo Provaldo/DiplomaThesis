@@ -1,7 +1,7 @@
 const { authSession, verifyConsumer } = require("../middlewares");
 const rmqController = require("../controllers/rabbitmq.controller");
 const {
-  rmqSecret,
+  // rmqSecret,
   rmqDeployment,
   rmqIntService,
   rmqExtService,
