@@ -43,8 +43,6 @@ module.exports = function (app) {
   app.post(
     "/api/rabbitmq/user/createRMQServer",
     [authSession.verifySession],
-    rmqRequestValidator.validateRMQServerRequestInput,
-    rmqSecret.secretCreator,
     rmqDeployment.deploymentCreator,
     rmqIntService.internalServiceCreator,
     rmqExtService.externalServiceCreator,
@@ -54,7 +52,6 @@ module.exports = function (app) {
   app.post(
     "/api/rabbitmq/user/deleteRMQServer",
     [authSession.verifySession],
-    rmqSecret.deleteRMQSecret,
     rmqDeployment.deleteRMQServerDeployment,
     rmqIntService.deleteInternalService,
     rmqExtService.deleteExternalService,

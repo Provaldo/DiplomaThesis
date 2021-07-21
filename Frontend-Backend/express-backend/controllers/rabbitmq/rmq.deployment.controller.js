@@ -114,8 +114,8 @@ deploymentCreator = (req, res, next) => {
                   // value: req.body.rmq_username,
                   valueFrom: {
                     secretKeyRef: {
-                      name: `rmq-credentials-${req.user.username}-secret`,
-                      key: `rmq-credentials-username`,
+                      name: `${req.user.username}-credentials-secret`,
+                      key: "username",
                     },
                   },
                 },
@@ -124,8 +124,8 @@ deploymentCreator = (req, res, next) => {
                   // value: req.body.rmq_password,
                   valueFrom: {
                     secretKeyRef: {
-                      name: `rmq-credentials-${req.user.username}-secret`,
-                      key: `rmq-credentials-password`,
+                      name: `${req.user.username}-credentials-secret`,
+                      key: "password",
                     },
                   },
                 },

@@ -12,7 +12,7 @@ import {
   CREATE_PRODUCER,
 } from "./types";
 
-export const createRMQServer = (credentials) => (dispatch) => {
+export const createRMQServer = () => (dispatch) => {
   dispatch({
     type: CLEAR_RMQ_MESSAGES,
   });
@@ -21,7 +21,7 @@ export const createRMQServer = (credentials) => (dispatch) => {
   });
 
   axios
-    .post("/api/rabbitmq/user/createRMQServer", credentials)
+    .post("/api/rabbitmq/user/createRMQServer")
     .then((res) => {
       dispatch({
         type: CREATE_RMQ_SERVER,

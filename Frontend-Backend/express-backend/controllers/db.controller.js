@@ -35,6 +35,9 @@ exports.signup = (req, res) => {
               return;
             }
 
+            // remove the password from further communications
+            req.body.password = "";
+
             res
               .status(200)
               .send({ message: "User was registered successfully!" });

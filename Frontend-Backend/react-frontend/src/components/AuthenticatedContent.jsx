@@ -25,8 +25,6 @@ const operatorOptions = [
 
 const AuthenticatedContent = (props) => {
   const [state, setState] = useState({
-    rmq_username: props.auth.user.username,
-    rmq_password: "",
     rmqServerExists: false,
     rmqConsumerExists: false,
     rmqConsumerName: "",
@@ -49,7 +47,6 @@ const AuthenticatedContent = (props) => {
   useEffect(() => {
     if (isMounted.current) {
       if (props.errors) {
-        // setState({ ...state, errors: props.errors });
         setState((s) => {
           return { ...s, errors: props.errors };
         });
@@ -108,18 +105,6 @@ const AuthenticatedContent = (props) => {
     setState((s) => {
       return { ...s, rmqLoggingConditionsOperator: selectedOption };
     });
-  };
-
-  const onRMQServerCreationRequest = (e) => {
-    e.preventDefault();
-    const credentials = {
-      rmq_username: state.rmq_username,
-      rmq_password: state.rmq_password,
-    };
-    setState((s) => {
-      return { ...s, rmq_password: "" };
-    });
-    props.createRMQServer(credentials);
   };
 
   const onRMQConsumerCreationRequest = (e) => {
@@ -262,57 +247,16 @@ const AuthenticatedContent = (props) => {
               )}
             </div>
             {!state.rmqServerExists && (
-              <form onSubmit={onRMQServerCreationRequest}>
+              <div className="form-group">
                 <h6>Request RabbitMQ Server: </h6>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="RMQ Server Username"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.rmq_username,
-                    })}
-                    name="rmq_username"
-                    onChange={handleInputChange}
-                    value={state.rmq_username}
-                  />
-                  {errors.rmq_username && (
-                    <div className="invalid-feedback">
-                      {errors.rmq_username}
-                    </div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <input
-                    type="password"
-                    placeholder="RMQ Server Password"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.rmq_password,
-                    })}
-                    name="rmq_password"
-                    onChange={handleInputChange}
-                    value={state.rmq_password}
-                  />
-                  {errors.rmq_password && (
-                    <div className="invalid-feedback">
-                      {errors.rmq_password}
-                    </div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={
-                      !(
-                        Boolean(state.rmq_username) &&
-                        Boolean(state.rmq_password)
-                      ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
-                    }
-                  >
-                    Create RabbitMQ Server
-                  </button>
-                </div>
-              </form>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={props.createRMQServer}
+                >
+                  Create RabbitMQ Server
+                </button>
+              </div>
             )}
             {state.rmqServerExists && (
               <button
@@ -519,126 +463,128 @@ const AuthenticatedContent = (props) => {
 ###########################                       PRODUCER                                   #########################
 ###########################                                                                   #########################
 ####################################################################################################################### */}
-          <li>
-            <form onSubmit={onRMQProducerCreationRequest}>
-              <h6>Request RabbitMQ Producer: </h6>
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Producer Exchange Name"
-                  className={classnames("form-control form-control-lg", {
-                    "is-invalid": errors.rmqProducerExchangeName,
-                  })}
-                  name="rmqProducerExchangeName"
-                  onChange={handleInputChange}
-                  value={state.rmqProducerExchangeName}
-                />
-                {errors.rmqProducerExchangeName && (
-                  <div className="invalid-feedback">
-                    {errors.rmqProducerExchangeName}
-                  </div>
-                )}
-              </div>
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Producer Message Topic"
-                  className={classnames("form-control form-control-lg", {
-                    "is-invalid": errors.rmqProducerTopic,
-                  })}
-                  name="rmqProducerTopic"
-                  onChange={handleInputChange}
-                  value={state.rmqProducerTopic}
-                />
-                {errors.rmqProducerTopic && (
-                  <div className="invalid-feedback">
-                    {errors.rmqProducerTopic}
-                  </div>
-                )}
-              </div>
-              {Boolean(Object.keys(state.rmqProducerMessageObject).length) &&
-                Object.keys(state.rmqProducerMessageObject).map((key) => {
-                  return (
-                    <div style={{ display: "flex", flexDirection: "row" }}>
-                      <div>{`${key}: ${state.rmqProducerMessageObject[key]}`}</div>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() =>
-                          onProducerKeyValuePairDeletionRequest(key)
-                        }
-                      >
-                        Remove Key-Value Pair
-                      </button>
+          {state.rmqServerExists && (
+            <li>
+              <form onSubmit={onRMQProducerCreationRequest}>
+                <h6>Request RabbitMQ Producer: </h6>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Producer Exchange Name"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqProducerExchangeName,
+                    })}
+                    name="rmqProducerExchangeName"
+                    onChange={handleInputChange}
+                    value={state.rmqProducerExchangeName}
+                  />
+                  {errors.rmqProducerExchangeName && (
+                    <div className="invalid-feedback">
+                      {errors.rmqProducerExchangeName}
                     </div>
-                  );
-                })}
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Message Key"
-                  className={classnames("form-control form-control-lg", {
-                    "is-invalid": errors.rmqProducerKey,
+                  )}
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Producer Message Topic"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqProducerTopic,
+                    })}
+                    name="rmqProducerTopic"
+                    onChange={handleInputChange}
+                    value={state.rmqProducerTopic}
+                  />
+                  {errors.rmqProducerTopic && (
+                    <div className="invalid-feedback">
+                      {errors.rmqProducerTopic}
+                    </div>
+                  )}
+                </div>
+                {Boolean(Object.keys(state.rmqProducerMessageObject).length) &&
+                  Object.keys(state.rmqProducerMessageObject).map((key) => {
+                    return (
+                      <div style={{ display: "flex", flexDirection: "row" }}>
+                        <div>{`${key}: ${state.rmqProducerMessageObject[key]}`}</div>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() =>
+                            onProducerKeyValuePairDeletionRequest(key)
+                          }
+                        >
+                          Remove Key-Value Pair
+                        </button>
+                      </div>
+                    );
                   })}
-                  name="rmqProducerKey"
-                  onChange={handleInputChange}
-                  value={state.rmqProducerKey}
-                />
-                {errors.rmqProducerKey && (
-                  <div className="invalid-feedback">
-                    {errors.rmqProducerKey}
-                  </div>
-                )}
-                <input
-                  type="text"
-                  placeholder="Message Value"
-                  className={classnames("form-control form-control-lg", {
-                    "is-invalid": errors.rmqProducerValue,
-                  })}
-                  name="rmqProducerValue"
-                  onChange={handleInputChange}
-                  value={state.rmqProducerValue}
-                />
-                {errors.rmqProducerValue && (
-                  <div className="invalid-feedback">
-                    {errors.rmqProducerValue}
-                  </div>
-                )}
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={
-                    !(
-                      Boolean(state.rmqProducerKey) &&
-                      Boolean(state.rmqProducerValue)
-                    ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
-                  }
-                  onClick={addProducerKeyValuePair}
-                >
-                  Add Key-Value Pair to Producer Message
-                </button>
-              </div>
-              <div className="form-group">
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={
-                    !(
-                      Boolean(state.rmqProducerExchangeName) &&
-                      Boolean(state.rmqProducerTopic) &&
-                      Boolean(
-                        Object.keys(state.rmqProducerMessageObject).length
-                      )
-                    ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
-                  }
-                >
-                  Create Producer
-                </button>
-              </div>
-            </form>
-            {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
-            {errors.message && <h6>{errors.message}</h6>}
-            <button onClick={props.testFunction}>Test Button</button>
-          </li>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Message Key"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqProducerKey,
+                    })}
+                    name="rmqProducerKey"
+                    onChange={handleInputChange}
+                    value={state.rmqProducerKey}
+                  />
+                  {errors.rmqProducerKey && (
+                    <div className="invalid-feedback">
+                      {errors.rmqProducerKey}
+                    </div>
+                  )}
+                  <input
+                    type="text"
+                    placeholder="Message Value"
+                    className={classnames("form-control form-control-lg", {
+                      "is-invalid": errors.rmqProducerValue,
+                    })}
+                    name="rmqProducerValue"
+                    onChange={handleInputChange}
+                    value={state.rmqProducerValue}
+                  />
+                  {errors.rmqProducerValue && (
+                    <div className="invalid-feedback">
+                      {errors.rmqProducerValue}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={
+                      !(
+                        Boolean(state.rmqProducerKey) &&
+                        Boolean(state.rmqProducerValue)
+                      ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
+                    }
+                    onClick={addProducerKeyValuePair}
+                  >
+                    Add Key-Value Pair to Producer Message
+                  </button>
+                </div>
+                <div className="form-group">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={
+                      !(
+                        Boolean(state.rmqProducerExchangeName) &&
+                        Boolean(state.rmqProducerTopic) &&
+                        Boolean(
+                          Object.keys(state.rmqProducerMessageObject).length
+                        )
+                      ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
+                    }
+                  >
+                    Create Producer
+                  </button>
+                </div>
+              </form>
+              {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
+              {errors.message && <h6>{errors.message}</h6>}
+              <button onClick={props.testFunction}>Test Button</button>
+            </li>
+          )}
         </ul>
       </div>
     </div>

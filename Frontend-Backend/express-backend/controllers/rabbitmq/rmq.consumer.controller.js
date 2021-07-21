@@ -116,20 +116,20 @@ createConsumerDeployment = (req, res, next) => {
               env: [
                 {
                   // Setting the rabbitmq server access credentials
-                  name: "RMQ_USERNAME",
+                  name: "AUTH_USERNAME",
                   valueFrom: {
                     secretKeyRef: {
-                      name: `rmq-credentials-${req.user.username}-secret`,
-                      key: `rmq-credentials-username`,
+                      name: `${req.user.username}-credentials-secret`,
+                      key: "username",
                     },
                   },
                 },
                 {
-                  name: "RMQ_PASSWORD",
+                  name: "AUTH_PASSWORD",
                   valueFrom: {
                     secretKeyRef: {
-                      name: `rmq-credentials-${req.user.username}-secret`,
-                      key: `rmq-credentials-password`,
+                      name: `${req.user.username}-credentials-secret`,
+                      key: "password",
                     },
                   },
                 },
@@ -156,24 +156,6 @@ createConsumerDeployment = (req, res, next) => {
                 {
                   name: "RMQ_LOGGING_CONDITIONS",
                   value: req.body.rmqLoggingConditions,
-                },
-                {
-                  name: "DB_USERNAME",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: `rmq-credentials-${req.user.username}-secret`,
-                      key: `rmq-credentials-username`,
-                    },
-                  },
-                },
-                {
-                  name: "DB_PASSWORD",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: `rmq-credentials-${req.user.username}-secret`,
-                      key: `rmq-credentials-password`,
-                    },
-                  },
                 },
                 {
                   name: "DB_SERVER",

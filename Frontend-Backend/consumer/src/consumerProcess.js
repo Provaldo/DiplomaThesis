@@ -1,7 +1,7 @@
 const amqp = require("amqplib/callback_api");
 const rmqConfig = require("../config/rmq.config");
-
 const dbConfig = require("../config/db.config");
+const authConfig = require("../config/auth.config");
 const db = require("../models");
 const { recordMessage } = require("../controllers/db.controller");
 // const MongoClient = require("mongodb").MongoClient;
@@ -13,9 +13,9 @@ db.mongoose
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      auth: { authSource: "mple" },
-      user: dbConfig.DB_USERNAME,
-      pass: dbConfig.DB_PASSWORD,
+      auth: { authSource: dbConfig.DB_DBNAME },
+      user: authConfig.USERNAME,
+      pass: authConfig.PASSWORD,
     }
   )
   .then(() => {
@@ -27,11 +27,8 @@ db.mongoose
   });
 
 amqp.connect(
-  `amqp://${rmqConfig.RMQ_USERNAME}:${rmqConfig.RMQ_PASSWORD}@${rmqConfig.RMQ_SERVER}:${rmqConfig.RMQ_PORT}`,
+  `amqp://${authConfig.USERNAME}:${authConfig.PASSWORD}@${rmqConfig.RMQ_SERVER}:${rmqConfig.RMQ_PORT}`,
   function (error0, connection) {
-    // amqp.connect(
-    //   "amqp://guest:guest@192.168.49.2:30672",
-    //   function (error0, connection) {
     if (error0) {
       throw error0;
     }
