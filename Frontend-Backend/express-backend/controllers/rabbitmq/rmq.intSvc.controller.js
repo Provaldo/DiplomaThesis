@@ -78,11 +78,11 @@ internalServiceCreator = (req, res, next) => {
     apiVersion: "v1",
     kind: "Service",
     metadata: {
-      name: `rabbitmq-int-svc-${req.user.username}`,
-      labels: { app: `rabbitmq-int-svc-${req.user.username}` },
+      name: `rabbitmq-int-svc-${req.body.username}`,
+      labels: { app: `rabbitmq-int-svc-${req.body.username}` },
     },
     spec: {
-      selector: { app: `rabbitmq-server-${req.user.username}` },
+      selector: { app: `rabbitmq-server-${req.body.username}` },
       type: "ClusterIP",
       ports: [{ port: 5672, targetPort: 5672 }],
     },

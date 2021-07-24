@@ -55,6 +55,9 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
   data.rmqLoggingConditions = !isEmpty(data.rmqLoggingConditions)
     ? data.rmqLoggingConditions
     : "";
+  data.consumerPassword = !isEmpty(data.consumerPassword)
+    ? data.consumerPassword
+    : "";
 
   if (!Validator.isAlphanumeric(data.rmqConsumerName)) {
     errors.rmqConsumerName =
@@ -86,6 +89,10 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
     // !Array.isArray(data.rmqLoggingConditions) ||
     // !data.rmqLoggingConditions.length {
     errors.rmqLoggingConditions = "Logging Conditions are required";
+  }
+
+  if (Validator.isEmpty(data.consumerPassword)) {
+    errors.consumerPassword = "Password is required";
   }
 
   if (isEmpty(errors)) {

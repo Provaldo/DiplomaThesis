@@ -19,10 +19,13 @@ const User = mongoose.model(
       podName: String,
       creationTimestamp: Date,
       namespace: String,
+      addressIP: String,
       managementAddressNodePort: Number,
-      managementAddress: String,
       managementAddressPort: Number,
-      managementAddressIP: String,
+      managementAddressPortName: String,
+      amqpAddressNodePort: Number,
+      amqpAddressPort: Number,
+      amqpAddressPortName: String,
     },
     consumers: [
       {

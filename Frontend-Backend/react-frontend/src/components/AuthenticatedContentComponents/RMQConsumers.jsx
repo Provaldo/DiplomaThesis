@@ -26,6 +26,7 @@ const RMQConsumers = (props) => {
     rmqLoggingConditionsOperator: "",
     rmqLoggingConditionsValue: "",
     rmqLoggingConditions: [],
+    consumerPassword: "",
     errors: {},
   });
 
@@ -94,6 +95,7 @@ const RMQConsumers = (props) => {
       rmqRoutingKey: state.rmqRoutingKey,
       rmqExchangeName: state.rmqExchangeName,
       rmqLoggingConditions: JSON.stringify(state.rmqLoggingConditions),
+      consumerPassword: state.consumerPassword,
     };
     setState((s) => {
       return {
@@ -102,6 +104,7 @@ const RMQConsumers = (props) => {
         rmqRoutingKey: "",
         rmqExchangeName: "",
         rmqLoggingConditions: [],
+        consumerPassword: "",
       };
     });
     props.createConsumer(consumerData);
@@ -298,6 +301,25 @@ const RMQConsumers = (props) => {
           </button>
         </div>
         <div className="form-group">
+          <h6>
+            Please provide your password, for the consumer to be able to connect
+            to the RabbitMQ server:
+          </h6>
+          <input
+            type="password"
+            placeholder="Password"
+            className={classnames("form-control form-control-lg", {
+              "is-invalid": errors.consumerPassword,
+            })}
+            name="consumerPassword"
+            onChange={handleInputChange}
+            value={state.consumerPassword}
+          />
+          {errors.consumerPassword && (
+            <div className="invalid-feedback">{errors.consumerPassword}</div>
+          )}
+        </div>
+        <div className="form-group">
           <button
             type="submit"
             className="btn btn-primary"
@@ -307,7 +329,8 @@ const RMQConsumers = (props) => {
                 Boolean(state.rmqRoutingKey) &&
                 Boolean(state.rmqExchangeName) &&
                 Array.isArray(state.rmqLoggingConditions) &&
-                state.rmqLoggingConditions.length
+                state.rmqLoggingConditions.length &&
+                Boolean(state.consumerPassword)
               ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
             }
           >

@@ -30,7 +30,7 @@ exports.userRequestProducer = (req, res) => {
   // VERSION 5
   amqp.connect(
     // "amqp://guest:guest@rabbitmq:5672",
-    `amqp://${req.user.username}:123456@rabbitmq-int-svc-${req.user.username}:5672`,
+    `amqp://${req.user.username}:${req.body.producerPassword}@rabbitmq-int-svc-${req.user.username}:5672`,
     function (error0, connection) {
       if (error0) {
         throw error0;

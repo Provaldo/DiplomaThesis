@@ -1,7 +1,12 @@
 const { authSession, verifySignUp } = require("../middlewares");
 const authController = require("../controllers/auth.controller");
 const dbController = require("../controllers/db.controller");
-const k8sController = require("../controllers/k8s.controller");
+// const k8sController = require("../controllers/k8s.controller");
+const {
+  rmqServerDeployment,
+  rmqIntService,
+  rmqExtService,
+} = require("../controllers/rabbitmq");
 const sessions = require("client-sessions");
 const config = require("../config/auth.config.js");
 const validateLoginInput = require("../validation/login");
@@ -35,8 +40,11 @@ module.exports = function (app) {
       verifySignUp.checkRolesExisted,
     ],
     authController.signup,
-    k8sController.createAuthSecret,
-    dbController.signup
+    rmqServerDeployment.deploymentCreator,
+    rmqIntService.internalServiceCreator,
+    rmqExtService.externalServiceCreator,
+    dbController.signup,
+    dbController.registerRMQServer
   );
 
   app.post("/api/auth/signin", [validateLoginInput], authController.signin);

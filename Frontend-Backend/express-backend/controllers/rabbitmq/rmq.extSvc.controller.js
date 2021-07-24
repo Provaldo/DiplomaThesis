@@ -78,17 +78,23 @@ externalServiceCreator = (req, res, next) => {
     apiVersion: "v1",
     kind: "Service",
     metadata: {
-      name: `rabbitmq-ext-svc-${req.user.username}`,
-      labels: { app: `rabbitmq-ext-svc-${req.user.username}` },
+      name: `rabbitmq-ext-svc-${req.body.username}`,
+      labels: { app: `rabbitmq-ext-svc-${req.body.username}` },
     },
     spec: {
-      selector: { app: `rabbitmq-server-${req.user.username}` },
+      selector: { app: `rabbitmq-server-${req.body.username}` },
       type: "LoadBalancer",
       ports: [
         {
+          name: "management",
           port: 15672,
           targetPort: 15672,
           // nodePort: 32000  // by not specifying a nodePort, it is automatically assigned based on available ports. We want that.
+        },
+        {
+          name: "amqp",
+          port: 5672,
+          targetPort: 5672,
         },
       ],
     },
@@ -105,10 +111,13 @@ externalServiceCreator = (req, res, next) => {
       //   "The External-Service-creation API response.body.spec.ports.nodePort is: ",
       //   response.body.spec.ports[0].nodePort
       // );
-      req.rabbitmqServer.nodePort = response.body.spec.ports[0].nodePort;
-      req.rabbitmqServer.address = response.body.spec.clusterIP + ":15672";
       req.rabbitmqServer.IP = response.body.spec.clusterIP;
-      req.rabbitmqServer.port = 15672;
+      req.rabbitmqServer.mngmntNodePort = response.body.spec.ports[0].nodePort;
+      req.rabbitmqServer.mngmntPort = 15672;
+      req.rabbitmqServer.mngmntPortName = "management";
+      req.rabbitmqServer.amqpNodePort = response.body.spec.ports[1].nodePort;
+      req.rabbitmqServer.amqpPort = 5672;
+      req.rabbitmqServer.amqpPortName = "amqp";
 
       // console.log(
       //   "The ip address of the RMQserver is: ",

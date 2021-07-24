@@ -5,7 +5,7 @@ const test = require("assert");
 
 const dbConfig = require("../config/db.config");
 
-exports.signup = (req, res) => {
+exports.signup = (req, res, next) => {
   const url = `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}`;
 
   MongoClient.connect(
@@ -38,18 +38,19 @@ exports.signup = (req, res) => {
             // remove the password from further communications
             req.body.password = "";
 
-            res
-              .status(200)
-              .send({ message: "User was registered successfully!" });
+            // res
+            //   .status(200)
+            //   .send({ message: "User was registered successfully!" });
 
             client.close();
+            next();
           }
         );
     }
   );
 };
 
-exports.registerRMQServer = (req, res) => {
+exports.registerRMQServer = (req, res, next) => {
   var rabbitmqServer = {
     deploymentName: req.rabbitmqServer.deploymentName,
     labels: req.rabbitmqServer.labels,
@@ -57,14 +58,17 @@ exports.registerRMQServer = (req, res) => {
     creationTimestamp: req.rabbitmqServer.creationTimestamp,
     id: req.rabbitmqServer.id,
     namespace: req.rabbitmqServer.ns,
-    managementAddressNodePort: req.rabbitmqServer.nodePort,
-    managementAddress: req.rabbitmqServer.address,
-    managementAddressIP: req.rabbitmqServer.IP,
-    managementAddressPort: req.rabbitmqServer.port,
+    addressIP: req.rabbitmqServer.IP,
+    managementAddressNodePort: req.rabbitmqServer.mngmntNodePort,
+    managementAddressPort: req.rabbitmqServer.mngmntPort,
+    managementAddressPortName: req.rabbitmqServer.mngmntPortName,
+    amqpAddressNodePort: req.rabbitmqServer.amqpNodePort,
+    amqpAddressPort: req.rabbitmqServer.amqpPort,
+    amqpAddressPortName: req.rabbitmqServer.amqpPortName,
   };
 
-  User.findByIdAndUpdate(
-    req.session.userId,
+  User.findOneAndUpdate(
+    { username: req.body.username },
     {
       rabbitmqServer: rabbitmqServer,
     },
@@ -85,6 +89,7 @@ exports.registerRMQServer = (req, res) => {
             "RabbitMQ Server and related Services were created successfully. DB updated.",
           serverData: rabbitmqServer,
         });
+        // next();
       }
     }
   );

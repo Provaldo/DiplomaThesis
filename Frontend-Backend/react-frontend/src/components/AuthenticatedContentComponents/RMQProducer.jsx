@@ -13,6 +13,7 @@ const RMQProducer = (props) => {
     rmqProducerMessageObject: {},
     rmqProducerKey: "",
     rmqProducerValue: "",
+    producerPassword: "",
     errors: {},
   });
 
@@ -58,6 +59,7 @@ const RMQProducer = (props) => {
       rmqProducerTopic: state.rmqProducerTopic,
       rmqProducerExchangeName: state.rmqProducerExchangeName,
       rmqProducerMessageObject: state.rmqProducerMessageObject,
+      producerPassword: state.producerPassword,
     };
     setState((s) => {
       return {
@@ -65,6 +67,7 @@ const RMQProducer = (props) => {
         rmqProducerTopic: "",
         rmqProducerExchangeName: "",
         rmqProducerMessageObject: {},
+        producerPassword: "",
       };
     });
     props.createProducer(producerData);
@@ -180,6 +183,25 @@ const RMQProducer = (props) => {
         </button>
       </div>
       <div className="form-group">
+        <h6>
+          Please provide your password, for the producer to be able to connect
+          to the RabbitMQ server:
+        </h6>
+        <input
+          type="password"
+          placeholder="Password"
+          className={classnames("form-control form-control-lg", {
+            "is-invalid": errors.producerPassword,
+          })}
+          name="producerPassword"
+          onChange={handleInputChange}
+          value={state.producerPassword}
+        />
+        {errors.producerPassword && (
+          <div className="invalid-feedback">{errors.producerPassword}</div>
+        )}
+      </div>
+      <div className="form-group">
         <button
           type="submit"
           className="btn btn-primary"
@@ -187,7 +209,8 @@ const RMQProducer = (props) => {
             !(
               Boolean(state.rmqProducerExchangeName) &&
               Boolean(state.rmqProducerTopic) &&
-              Boolean(Object.keys(state.rmqProducerMessageObject).length)
+              Boolean(Object.keys(state.rmqProducerMessageObject).length) &&
+              Boolean(state.producerPassword)
             ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
           }
         >

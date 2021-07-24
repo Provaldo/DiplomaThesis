@@ -117,21 +117,11 @@ createConsumerDeployment = (req, res, next) => {
                 {
                   // Setting the rabbitmq server access credentials
                   name: "AUTH_USERNAME",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: `${req.user.username}-credentials-secret`,
-                      key: "username",
-                    },
-                  },
+                  value: `${req.user.username}`,
                 },
                 {
                   name: "AUTH_PASSWORD",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: `${req.user.username}-credentials-secret`,
-                      key: "password",
-                    },
-                  },
+                  value: `${req.body.consumerPassword}`,
                 },
                 {
                   name: "RMQ_SERVER",
@@ -227,6 +217,8 @@ createConsumerDeployment = (req, res, next) => {
               routingKey: req.body.rmqRoutingKey,
               loggingConditions,
             };
+
+            req.body.consumerPassword = "";
             next();
           })
           .catch((err) => {

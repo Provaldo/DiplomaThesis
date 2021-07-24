@@ -1,20 +1,21 @@
 const { authSession, verifyConsumer } = require("../middlewares");
-const rmqController = require("../controllers/rabbitmq.controller");
+const rmqController = require("../controllers/rabbitmq/rmq.producer.controller");
 const {
   // rmqSecret,
-  rmqDeployment,
+  rmqServerDeployment,
   rmqIntService,
   rmqExtService,
   rmqConsumer,
+  rmqProducer,
 } = require("../controllers/rabbitmq");
 const dbController = require("../controllers/db.controller");
 const rmqRequestValidator = require("../validation/rmq_requests");
 
 module.exports = function (app) {
   app.post(
-    "/api/rabbitmq/user/producer",
+    "/api/rabbitmq/user/producerCreate",
     [authSession.verifySession],
-    rmqController.userRequestProducer
+    rmqProducer.userRequestProducer
   );
 
   app.post(
@@ -43,7 +44,7 @@ module.exports = function (app) {
   app.post(
     "/api/rabbitmq/user/createRMQServer",
     [authSession.verifySession],
-    rmqDeployment.deploymentCreator,
+    rmqServerDeployment.deploymentCreator,
     rmqIntService.internalServiceCreator,
     rmqExtService.externalServiceCreator,
     dbController.registerRMQServer
@@ -52,7 +53,7 @@ module.exports = function (app) {
   app.post(
     "/api/rabbitmq/user/deleteRMQServer",
     [authSession.verifySession],
-    rmqDeployment.deleteRMQServerDeployment,
+    rmqServerDeployment.deleteRMQServerDeployment,
     rmqIntService.deleteInternalService,
     rmqExtService.deleteExternalService,
     dbController.removeRMQServer
