@@ -24,9 +24,9 @@
   text-align: start;
   font-size: calc(10px + 2vmin);
   color: white;
-  border-style: solid;
+  /* border-style: solid;
   border-color: red;
-  border-width: 2px;
+  border-width: 2px; */
 }
 
 .RMQ-server-container {
@@ -42,3 +42,15 @@
   border-color: black;
   border-width: 2px;
 }
+
+/* .styled-button-tab {
+  font-size: 20px;
+  padding: 10px 60px;
+  cursor: pointer;
+  opacity: 0.6;
+  background: white;
+  border: 1;
+  border-width: 2px;
+  border-radius: 15;
+  outline: 1;
+} */

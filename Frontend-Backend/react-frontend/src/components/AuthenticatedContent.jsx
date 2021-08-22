@@ -7,11 +7,49 @@ import RMQServer from "./AuthenticatedContentComponents/RMQServer";
 import RMQConsumers from "./AuthenticatedContentComponents/RMQConsumers";
 import RMQProducer from "./AuthenticatedContentComponents/RMQProducer";
 
+import styled from "styled-components";
+
 const AuthenticatedContent = (props) => {
   const [state, setState] = useState({
     rmqServerExists: false,
     errors: {},
   });
+
+  {
+    /* #########################################################################################################
+###########################                       TABS CREATION                             #########################
+####################################################################################################################### */
+  }
+  const tabs = [
+    "User Info",
+    "Overview",
+    "RMQ Server",
+    "Consumers",
+    "Producers",
+  ];
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+
+  const Tab = styled.button`
+    font-size: 20px;
+    padding: 10px 60px;
+    margin: 0px 3px 0px 3px;
+    cursor: pointer;
+    opacity: 0.6;
+    background: grey;
+    border: 0;
+    border-radius: 4px;
+    outline: 1;
+    ${({ active }) =>
+      active &&
+      `
+    border-bottom: 3px solid green;
+    opacity: 1;
+  `}
+  `;
+
+  const ButtonGroup = styled.div`
+    display: flex;
+  `;
 
   const isMounted = useRef(false);
 
@@ -59,34 +97,38 @@ const AuthenticatedContent = (props) => {
         <div>Authenticated Content</div>
       </header>
       <br />
+
+      <ButtonGroup>
+        {tabs.map((tab) => (
+          <Tab
+            className="styled-button-tab"
+            key={tab}
+            active={activeTab === tab}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </Tab>
+        ))}
+      </ButtonGroup>
+
+      <div className="Auth-container">
+        {/* <p /> */}
+        {/* <br /> */}
+        {activeTab == "User Info" && (
+          <ul>
+            <li>username: {username}</li>
+            <li>email: {email}</li>
+            <li>roles: {roles}</li>{" "}
+          </ul>
+        )}
+        {activeTab == "Overview" && <></>}
+        {activeTab == "RMQ Server" && <RMQServer />}
+        {activeTab == "Consumers" && state.rmqServerExists && <RMQConsumers />}
+        {activeTab == "Producers" && state.rmqServerExists && <RMQProducer />}
+      </div>
+
       <div className="Auth-container">
         <ul>
-          <li>Id: {id}</li>
-          <li>username: {username}</li>
-          <li>email: {email}</li>
-          <li>roles: {roles}</li>
-          {/* #########################################################################################################
-###########################                       RABBITMQ SERVER                             #########################
-####################################################################################################################### */}
-          <li>
-            <RMQServer />
-          </li>
-          {/* #########################################################################################################
-###########################                       CONSUMERS                                   #########################
-####################################################################################################################### */}
-          {state.rmqServerExists && (
-            <li>
-              <RMQConsumers />
-            </li>
-          )}
-          {/* #########################################################################################################
-###########################                       PRODUCER                                   ##########################
-####################################################################################################################### */}
-          {state.rmqServerExists && (
-            <li>
-              <RMQProducer />
-            </li>
-          )}
           <li>
             {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
             {errors.message && <h6>{errors.message}</h6>}
