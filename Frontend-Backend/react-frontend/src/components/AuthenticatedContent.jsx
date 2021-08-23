@@ -71,8 +71,7 @@ const AuthenticatedContent = (props) => {
   //   }
   // }, [props.auth.isAuthenticated, props.history]);
 
-  const { id, username, email, roles, rabbitmqServer, consumers } =
-    props.auth.user;
+  const { username, email, roles, rabbitmqServer } = props.auth.user;
 
   useEffect(() => {
     if (

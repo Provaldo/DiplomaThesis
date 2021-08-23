@@ -39,16 +39,18 @@ amqp.connect(
 
       // test
       var exchange = rmqConfig.RMQ_EXCHANGE_NAME;
+      var queue = rmqConfig.RMQ_QUEUE_NAME;
       // test
       channel.assertExchange(exchange, "topic", { durable: true });
 
       channel.assertQueue(
-        "",
+        queue,
         {
           // this means that the queue will survive a RabbitMQ node restart. we also need to mark the messages as durable.
           durable: true,
           // When the connection that declared it closes, the queue will be deleted because it is declared as exclusive.
-          exclusive: true,
+          // The queue is NOT exclusive because we want it to be used by other consumers too for scaling reasons.
+          // exclusive: true,
         },
         function (error2, q) {
           if (error2) {
@@ -102,26 +104,32 @@ amqp.connect(
                       if (messageContent[variable] == value) {
                         loggingConditionSatisfied = true;
                       }
+                      break;
                     case ">":
                       if (messageContent[variable] > value) {
                         loggingConditionSatisfied = true;
                       }
+                      break;
                     case "<":
                       if (messageContent[variable] < value) {
                         loggingConditionSatisfied = true;
                       }
+                      break;
                     case "!=":
                       if (messageContent[variable] != value) {
                         loggingConditionSatisfied = true;
                       }
+                      break;
                     case ">=":
                       if (messageContent[variable] >= value) {
                         loggingConditionSatisfied = true;
                       }
+                      break;
                     case "<=":
                       if (messageContent[variable] <= value) {
                         loggingConditionSatisfied = true;
                       }
+                      break;
                   }
 
                   if (loggingConditionSatisfied) {

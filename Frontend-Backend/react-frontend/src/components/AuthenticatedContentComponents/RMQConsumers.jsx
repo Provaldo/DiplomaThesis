@@ -22,6 +22,7 @@ const RMQConsumers = (props) => {
     rmqConsumerName: "",
     rmqRoutingKey: "",
     rmqExchangeName: "",
+    rmqQueueName: "",
     rmqLoggingConditionsVariable: "",
     rmqLoggingConditionsOperator: "",
     rmqLoggingConditionsValue: "",
@@ -94,6 +95,7 @@ const RMQConsumers = (props) => {
       rmqConsumerName: state.rmqConsumerName,
       rmqRoutingKey: state.rmqRoutingKey,
       rmqExchangeName: state.rmqExchangeName,
+      rmqQueueName: state.rmqQueueName,
       rmqLoggingConditions: JSON.stringify(state.rmqLoggingConditions),
       consumerPassword: state.consumerPassword,
     };
@@ -103,6 +105,7 @@ const RMQConsumers = (props) => {
         rmqConsumerName: "",
         rmqRoutingKey: "",
         rmqExchangeName: "",
+        rmqQueueName: "",
         rmqLoggingConditions: [],
         consumerPassword: "",
       };
@@ -154,6 +157,7 @@ const RMQConsumers = (props) => {
               <div>{`-name: ${consumer.name}`}</div>
               <ul>
                 <li>{`exchange name: ${consumer.exchangeName}`}</li>
+                <li>{`queue name: ${consumer.queueName}`}</li>
                 <li>{`routing key: ${consumer.routingKey}`}</li>
                 <li>
                   logging conditions:{" "}
@@ -204,6 +208,21 @@ const RMQConsumers = (props) => {
           />
           {errors.rmqExchangeName && (
             <div className="invalid-feedback">{errors.rmqExchangeName}</div>
+          )}
+        </div>
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Queue Name"
+            className={classnames("form-control form-control-lg", {
+              "is-invalid": errors.rmqQueueName,
+            })}
+            name="rmqQueueName"
+            onChange={handleInputChange}
+            value={state.rmqQueueName}
+          />
+          {errors.rmqQueueName && (
+            <div className="invalid-feedback">{errors.rmqQueueName}</div>
           )}
         </div>
         <div className="form-group">
@@ -328,6 +347,7 @@ const RMQConsumers = (props) => {
                 Boolean(state.rmqConsumerName) &&
                 Boolean(state.rmqRoutingKey) &&
                 Boolean(state.rmqExchangeName) &&
+                Boolean(state.rmqQueueName) &&
                 Array.isArray(state.rmqLoggingConditions) &&
                 state.rmqLoggingConditions.length &&
                 Boolean(state.consumerPassword)

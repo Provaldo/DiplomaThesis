@@ -37,6 +37,7 @@ const User = mongoose.model(
         creationTimestamp: Date,
         routingKey: String,
         exchangeName: String,
+        queueName: String,
         loggingConditions: [
           {
             variable: String,

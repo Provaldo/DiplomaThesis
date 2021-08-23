@@ -9,7 +9,6 @@ const dbConfig = require("../config/db.config");
 createProcess = (req, res) => {
   consumerProcess.createConsumerProcess(req.body);
   consumerConfig.NR_OF_CONSUMERS = ++consumerConfig.NR_OF_CONSUMERS;
-  console.log("I'm here hehe");
   res.status(200).send({
     id: consumerConfig.NR_OF_CONSUMERS,
     creationTimestamp: Date.now(),

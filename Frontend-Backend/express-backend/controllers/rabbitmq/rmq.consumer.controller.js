@@ -140,6 +140,10 @@ createConsumerDeployment = (req, res, next) => {
                   value: req.body.rmqExchangeName,
                 },
                 {
+                  name: "RMQ_QUEUE_NAME",
+                  value: req.body.rmqQueueName,
+                },
+                {
                   name: "RMQ_ROUTING_KEY",
                   value: req.body.rmqRoutingKey,
                 },
@@ -214,6 +218,7 @@ createConsumerDeployment = (req, res, next) => {
               ns,
               creationTimestamp,
               exchangeName: req.body.rmqExchangeName,
+              queueName: req.body.rmqQueueName,
               routingKey: req.body.rmqRoutingKey,
               loggingConditions,
             };

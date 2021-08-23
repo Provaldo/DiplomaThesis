@@ -60,7 +60,9 @@ exports.userRequestProducer = (req, res) => {
         // been created to assert their own queue and bind it to the exchange, then
         // all messages sent to the exchange will be lost.
 
-        channel.publish(exchange, key, Buffer.from(JSON.stringify(msg)), {});
+        channel.publish(exchange, key, Buffer.from(JSON.stringify(msg)), {
+          timestamp: Date.now(),
+        });
 
         console.log(" [x] Sent %s", msg);
       });

@@ -51,6 +51,7 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
   data.rmqExchangeName = !isEmpty(data.rmqExchangeName)
     ? data.rmqExchangeName
     : "";
+  data.rmqQueueName = !isEmpty(data.rmqQueueName) ? data.rmqQueueName : "";
   data.rmqRoutingKey = !isEmpty(data.rmqRoutingKey) ? data.rmqRoutingKey : "";
   data.rmqLoggingConditions = !isEmpty(data.rmqLoggingConditions)
     ? data.rmqLoggingConditions
@@ -79,6 +80,24 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
 
   if (Validator.isEmpty(data.rmqExchangeName)) {
     errors.rmqExchangeName = "Exchange Name is required";
+  }
+
+  if (!Validator.isAlphanumeric(data.rmqQueueName)) {
+    errors.rmqQueueName =
+      "Queue Name must contain only alphanumeric characters";
+  }
+
+  if (!Validator.isLowercase(data.rmqQueueName)) {
+    errors.rmqQueueName =
+      "Queue Name must contain only lowercase characters (don't hate me hate rabbitmq. jk blame me)";
+  }
+
+  if (!Validator.isLength(data.rmqQueueName, { min: 3, max: 20 })) {
+    errors.rmqQueueName = "Queue Name must be between 3 to 20 chars";
+  }
+
+  if (Validator.isEmpty(data.rmqQueueName)) {
+    errors.rmqQueueName = "Queue Name is required";
   }
 
   if (Validator.isEmpty(data.rmqRoutingKey)) {
