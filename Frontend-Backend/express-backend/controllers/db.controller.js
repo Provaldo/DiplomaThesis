@@ -180,6 +180,37 @@ exports.removeConsumer = (req, res) => {
   );
 };
 
+exports.updateOverviewDataOnDB = (userId, overviewData) => {
+  User.findByIdAndUpdate(
+    userId,
+    {
+      $set: {
+        overviewData: overviewData,
+      },
+    },
+    { new: true, runValidators: true, useFindAndModify: false },
+    (err, doc) => {
+      if (err) {
+        // res.status(500).send({ message: err });
+        console.log(
+          "DB error while updating Overview data in user's document: ",
+          err
+        );
+        // ProcessingInstruction.exit(); // I don't know what this does
+        return;
+      } else {
+        // console.log("Updated DB document: ", doc);
+        // res.status(200).send({
+        //   message:
+        //     "RabbitMQ Server and related Services were created successfully. DB updated.",
+        //   serverData: rabbitmqServer,
+        // });
+        // next();
+      }
+    }
+  );
+};
+
 // exports.test = (req, res) => {
 //   // Connection url
 //   const url = `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}`;

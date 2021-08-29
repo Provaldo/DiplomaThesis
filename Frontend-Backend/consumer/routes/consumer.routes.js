@@ -1,7 +1,12 @@
-const consumerController = require("../controllers/consumer.controller");
+const overviewController = require("../controllers/overview.controller");
 
 module.exports = function (app) {
-  app.post("/consumer/createProcess", consumerController.createProcess);
+  app.get(
+    "/consumer/generateOverviewData",
+    overviewController.generateOverviewData
+  );
 
-  app.post("/consumer/deleteProcess");
+  // app.post("/consumer/createProcess", overviewController.createProcess);
+
+  // app.post("/consumer/deleteProcess");
 };

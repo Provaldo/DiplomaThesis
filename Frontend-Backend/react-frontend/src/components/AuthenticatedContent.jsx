@@ -6,6 +6,7 @@ import { testFunction } from "../actions/test.actions";
 import RMQServer from "./AuthenticatedContentComponents/RMQServer";
 import RMQConsumers from "./AuthenticatedContentComponents/RMQConsumers";
 import RMQProducer from "./AuthenticatedContentComponents/RMQProducer";
+import Overview from "./AuthenticatedContentComponents/Overview";
 
 import styled from "styled-components";
 
@@ -23,8 +24,8 @@ const AuthenticatedContent = (props) => {
   const tabs = [
     "User Info",
     "Overview",
-    "RMQ Server",
-    "Consumers",
+    "Message Broker",
+    "Filters",
     "Producers",
   ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -120,9 +121,10 @@ const AuthenticatedContent = (props) => {
             <li>roles: {roles}</li>{" "}
           </ul>
         )}
-        {activeTab == "Overview" && <></>}
-        {activeTab == "RMQ Server" && <RMQServer />}
-        {activeTab == "Consumers" && state.rmqServerExists && <RMQConsumers />}
+
+        {activeTab == "Overview" && <Overview />}
+        {activeTab == "Message Broker" && <RMQServer />}
+        {activeTab == "Filters" && state.rmqServerExists && <RMQConsumers />}
         {activeTab == "Producers" && state.rmqServerExists && <RMQProducer />}
       </div>
 

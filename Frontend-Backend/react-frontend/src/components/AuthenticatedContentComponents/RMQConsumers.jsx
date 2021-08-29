@@ -99,6 +99,7 @@ const RMQConsumers = (props) => {
       rmqLoggingConditions: JSON.stringify(state.rmqLoggingConditions),
       consumerPassword: state.consumerPassword,
     };
+    props.createConsumer(consumerData);
     setState((s) => {
       return {
         ...s,
@@ -110,7 +111,6 @@ const RMQConsumers = (props) => {
         consumerPassword: "",
       };
     });
-    props.createConsumer(consumerData);
   };
 
   const onRMQConsumerDeletionRequest = (rmqConsumerName) => {

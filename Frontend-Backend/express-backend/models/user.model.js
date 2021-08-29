@@ -47,6 +47,47 @@ const User = mongoose.model(
         ],
       },
     ],
+    overviewData: {
+      msgsRcvdByExchanges: Number,
+      msgsRoutedByExchanges: Number,
+      incomingMsgRateToExchanges: [
+        {
+          exchangeName: String,
+          avgValue: Number,
+          avgRate: Number,
+        },
+      ],
+      bytesOfMsgsInQueues: Number,
+      msgsDeliveredToConsumersByActiveQueues: Number,
+      msgsAcknowledged: {
+        totalMsgs: Number,
+        avgValue: Number,
+        avgRate: Number,
+      },
+      msgsDeliveredToConsumers: {
+        totalMsgs: Number,
+        avgValue: Number,
+        avgRate: Number,
+      },
+      msgsDroppedAsUnroutable: {
+        totalMsgs: Number,
+        avgValue: Number,
+        avgRate: Number,
+      },
+      msgsPublished: {
+        totalMsgs: Number,
+        avgValue: Number,
+        avgRate: Number,
+      },
+      msgsInQueues: {
+        totalMsgs: Number,
+        avgValue: Number,
+        avgRate: Number,
+      },
+      numberOfConsumers: Number,
+      numberOfExchanges: Number,
+      numberOfQueues: Number,
+    },
   })
 );
 

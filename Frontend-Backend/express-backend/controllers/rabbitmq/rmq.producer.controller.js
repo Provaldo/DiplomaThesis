@@ -54,6 +54,7 @@ exports.userRequestProducer = (req, res) => {
         // test
         channel.assertExchange(exchange, "topic", {
           durable: true,
+          autoDelete: true,
         });
 
         // The producer not asserting a queue means that if a consumer hasn't already

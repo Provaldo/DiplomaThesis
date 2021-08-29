@@ -7,6 +7,7 @@ const {
   rmqExtService,
   rmqConsumer,
   rmqProducer,
+  rmqOverview,
 } = require("../controllers/rabbitmq");
 const dbController = require("../controllers/db.controller");
 const rmqRequestValidator = require("../validation/rmq_requests");
@@ -57,5 +58,13 @@ module.exports = function (app) {
     rmqIntService.deleteInternalService,
     rmqExtService.deleteExternalService,
     dbController.removeRMQServer
+  );
+
+  app.get(
+    "/api/rabbitmq/user/overview",
+    authSession.verifySession,
+    rmqOverview.exposeConsumerIfExists,
+    // rmqOverview.requestDataGenerationFromConsumer,
+    rmqOverview.createStream
   );
 };

@@ -4,6 +4,7 @@ const rmqIntService = require("./rmq.intSvc.controller");
 const rmqExtService = require("./rmq.extSvc.controller");
 const rmqConsumer = require("./rmq.consumer.controller");
 const rmqProducer = require("./rmq.producer.controller");
+const rmqOverview = require("./rmq.overview.controller");
 
 module.exports = {
   rmqSecret,
@@ -12,4 +13,5 @@ module.exports = {
   rmqExtService,
   rmqConsumer,
   rmqProducer,
+  rmqOverview,
 };

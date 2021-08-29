@@ -2,13 +2,13 @@ const rmqConfig = require("../config/rmq.config");
 const db = require("../models");
 const Message = db.message;
 
-exports.recordMessage = (condition, msg, messageCount) => {
+exports.recordMessage = (condition, msg) => {
   const message = new Message({
     consumerName: rmqConfig.RMQ_CONSUMER_NAME,
     exchangeName: rmqConfig.RMQ_EXCHANGE_NAME,
     queueName: rmqConfig.RMQ_QUEUE_NAME,
     content: JSON.parse(msg.content.toString()),
-    serialNumber: messageCount,
+    serialNumber: msg.fields.deliveryTag,
     topic: rmqConfig.RMQ_ROUTING_KEY, // THIS COULD BE REPLACED BY SOMETHING ELSE THAT WOULD LOG THE ACTUAL TOPIC OF THE SENT MESSAGE AND NOT THE ROUTING KEY
     createdAt: msg.properties.timestamp,
     receivedAt: Date.now(),

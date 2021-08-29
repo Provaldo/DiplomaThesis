@@ -10,6 +10,8 @@ import {
   CREATE_CONSUMER,
   DELETE_CONSUMER,
   CREATE_PRODUCER,
+  START_OVERVIEW_STREAM,
+  GET_STREAM_DATA,
 } from "./types";
 
 export const createRMQServer = (serverData) => (dispatch) => {
@@ -175,4 +177,40 @@ export const deleteConsumer = (consumerData) => (dispatch) => {
         type: CLEAR_RMQ_MESSAGES,
       });
     });
+};
+
+// export const startOverviewStream = (events) => (dispatch) => {
+//   dispatch({
+//     type: CLEAR_RMQ_MESSAGES,
+//   });
+//   dispatch({
+//     type: CLEAR_ERRORS,
+//   });
+//   dispatch({
+//     type: START_OVERVIEW_STREAM,
+//     payload: events,
+//   });
+// };
+
+// export const getStreamDataChunk = (parsedData) => (dispatch) => {
+//   dispatch({
+//     type: GET_STREAM_DATA,
+//     payload: parsedData,
+//   });
+// };
+
+export const getStreamErrors = (err) => (dispatch) => {
+  dispatch({
+    type: GET_ERRORS,
+    payload: err.response.data,
+  });
+  if (
+    err.response.data.message &&
+    err.response.data.message === "No valid session exists!"
+  ) {
+    dispatch({ type: LOGOUT_CURRENT_USER });
+  }
+  dispatch({
+    type: CLEAR_RMQ_MESSAGES,
+  });
 };
