@@ -17,9 +17,22 @@ exposeConsumerIfExists = (req, res, next) => {
         //   message:
         //     "Please create a filter/consumer for the live data to be generated.",
         // });
+
+        const headers = {
+          "Content-Type": "text/event-stream",
+          Connection: "keep-alive",
+          "Cache-Control": "no-cache",
+          "X-Accel-Buffering": "no",
+        };
+        res.writeHead(200, headers);
+
         let overviewData = doc.overviewData;
+        // console.log("Static overview if no consumer exists", overviewData);
         const data = `data: ${JSON.stringify(overviewData)}\n\n`;
         res.write(data);
+
+        const endStreamEvent = "event: endStreamEvent\n\n";
+        res.write(endStreamEvent);
         return;
       } else {
         var namespace = "default";
@@ -92,25 +105,30 @@ createStream = async (req, res) => {
   req.on("close", () => {
     console.log("Connection closed at: ", Date.now());
     req.stopFlag = true;
-    return;
+    // return;
   });
 
   console.log("Starting to send");
-  continuousSend(req, res);
+  setTimeout(() => continuousSend(req, res), 1000); // This timeout is necessary for the service exposing the consumer to have time to be established
 };
 
 const continuousSend = async (req, res) => {
   if (!req.stopFlag) {
+    // console.log("Before gatherOverviewData is called");
     res.overviewData = await gatherOverviewData(req.user.username, res);
+    // console.log("After gatherOverviewData");
     // console.log("res.overviewData: ", res.overviewData);
 
     if (res.overviewData !== -1) {
       const data = `data: ${JSON.stringify(res.overviewData)}\n\n`;
 
       res.write(data);
-      console.log("data chunk sent");
+      // console.log("data chunk sent");
 
       setTimeout(() => continuousSend(req, res), 5000);
+    } else {
+      const endStreamEvent = "event: endStreamEvent\n\n";
+      res.write(endStreamEvent);
     }
   } else {
     deleteConsumerOverviewService(req.user.username);
@@ -125,24 +143,14 @@ const gatherOverviewData = async (username, res) => {
       `http://consumer-overview-svc-${username}:5000/consumer/generateOverviewData`
     );
     if (axiosRes.statusText == "OK") {
-      // console.log("axiosRes: ", axiosRes);
-      // console.log("axiosRes.data", axiosRes.data);
+      // console.log("axiosRes is ok");
       return axiosRes.data.overviewData;
     } else {
-      // console.log("axiosRes is not ok: ", axiosRes);
-      res.status(500).send({
-        message:
-          "Unkown error: Data generation request to consumer failed. " +
-          axiosRes.body,
-      });
+      console.log("axiosRes is not ok: ", axiosRes);
       return -1;
     }
   } catch (err) {
     console.log("error: ", err);
-    res.status(500).send({
-      message:
-        "Unkown error: Data generation request to consumer failed. " + err,
-    });
     return -1;
   }
 };

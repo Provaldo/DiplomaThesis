@@ -2,7 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import "../components.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getStreamErrors } from "../../actions/rabbitmq.actions";
+import {
+  getStreamErrors,
+  endStreamAction,
+} from "../../actions/rabbitmq.actions";
 import classnames from "classnames";
 
 const Overview = (props) => {
@@ -33,8 +36,12 @@ const Overview = (props) => {
           return { ...s, overviewData: parsedData };
         });
       };
+
+      events.addEventListener("endStreamEvent", () => {
+        endStream();
+      });
     } catch (err) {
-      getStreamErrors(err);
+      props.getStreamErrors(err);
     }
   };
 
@@ -42,19 +49,12 @@ const Overview = (props) => {
     try {
       console.log("Closing stream");
       setStreaming(false);
-      state.streamEvents.close();
+      // state.streamEvents.close();
+      props.endStreamAction(state.streamEvents);
     } catch (err) {
-      getStreamErrors(err);
+      props.getStreamErrors(err);
     }
   };
-
-  useEffect(() => {
-    startStream();
-    setStreaming(true);
-    // return () => {
-    //   endStream();
-    // };
-  }, []);
 
   const onStreamToggleHandler = () => {
     if (streaming) {
@@ -111,6 +111,14 @@ const Overview = (props) => {
       });
     }
   }, [consumers]);
+
+  useEffect(() => {
+    startStream();
+    setStreaming(true);
+    return () => {
+      props.endStreamAction(state.streamEvents);
+    };
+  }, []);
 
   const { errors } = state;
 
@@ -177,6 +185,7 @@ Overview.propTypes = {
   errors: PropTypes.object.isRequired,
   rabbitmq: PropTypes.object.isRequired,
   getStreamErrors: PropTypes.func.isRequired,
+  endStreamAction: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -187,4 +196,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   getStreamErrors,
+  endStreamAction,
 })(Overview);

@@ -198,6 +198,15 @@ export const deleteConsumer = (consumerData) => (dispatch) => {
 //     payload: parsedData,
 //   });
 // };
+export const endStreamAction = (streamEvents) => (dispatch) => {
+  dispatch({
+    type: CLEAR_RMQ_MESSAGES,
+  });
+  dispatch({
+    type: CLEAR_ERRORS,
+  });
+  streamEvents.close();
+};
 
 export const getStreamErrors = (err) => (dispatch) => {
   dispatch({

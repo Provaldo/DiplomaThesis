@@ -11,6 +11,7 @@ import classnames from "classnames";
 const RMQServer = (props) => {
   const [state, setState] = useState({
     rmqServerExists: false,
+    rmqConsumerExists: false,
     rmqServerPassword: "",
     errors: {},
   });
@@ -29,7 +30,7 @@ const RMQServer = (props) => {
     }
   }, [props.errors]);
 
-  const { username, rabbitmqServer } = props.auth.user;
+  const { username, rabbitmqServer, consumers } = props.auth.user;
 
   const handleInputChange = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -50,6 +51,22 @@ const RMQServer = (props) => {
       });
     }
   }, [rabbitmqServer]);
+
+  useEffect(() => {
+    if (
+      typeof consumers !== "undefined" &&
+      consumers !== null &&
+      Object.keys(consumers).length !== 0
+    ) {
+      setState((s) => {
+        return { ...s, rmqConsumerExists: true };
+      });
+    } else {
+      setState((s) => {
+        return { ...s, rmqConsumerExists: false };
+      });
+    }
+  }, [consumers]);
 
   const onRMQServerCreationRequest = (e) => {
     e.preventDefault();
@@ -127,9 +144,19 @@ const RMQServer = (props) => {
         </div>
       )}
       {state.rmqServerExists && (
-        <button className="btn btn-danger" onClick={props.deleteRMQServer}>
+        <button
+          className="btn btn-danger"
+          disabled={state.rmqConsumerExists}
+          onClick={props.deleteRMQServer}
+        >
           Delete RabbitMQ Server
         </button>
+      )}
+      {state.rmqConsumerExists && (
+        <h6>
+          Message broker CANNOT be deleted without deleting all the active
+          filters first.
+        </h6>
       )}
     </div>
   );
