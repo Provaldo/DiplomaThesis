@@ -20,7 +20,7 @@ const fetch = require("node-fetch");
 generateOverviewData = async (req, res) => {
   console.log("Consumer function generateOverviewData");
 
-  const dataTimeframeInSecs = "120";
+  const dataTimeframeInSecs = "300";
   const dataIntervalsInSecs = "30";
 
   let url = `http://rabbitmq-ext-svc-${authConfig.USERNAME}:15672/`;

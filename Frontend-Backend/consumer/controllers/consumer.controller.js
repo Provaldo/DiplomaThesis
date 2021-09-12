@@ -80,7 +80,7 @@ consumerProcess = () => {
             channel.consume(
               q.queue,
               function (msg) {
-                console.log(" [x] Received %s", msg.content.toString());
+                // console.log(" [x] Received %s", msg.content.toString());
                 // console.log("Message object is: ", msg);
                 // console.log(
                 //   "Message content is: ",

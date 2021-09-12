@@ -1,0 +1,59 @@
+################################ SXOLIA ##################################
+
+ΣΤο σημείο που αναφέρεσαι σε expose των services με iptables στο local μηχάνημα, δώσε στον αναγνώστη να καταλάβει ότι αυτό δεν γίνεται σε cloud υποδομές που έχουν L4 load balancers κτλ...
+
+##########################################################################
+
+- Για την ανάπτυξη του kubernetes cluster χρησιμοποιήθηκε το Minikube, το οποίο επιτρέπει τη δημιουργία ενός τοπικού k8s cluster ενός κόμβου είτε σε ένα VM είτε σε ένα container είτε σε bare-metal.
+Στην προκειμένη περίπτωση επιλέχθηκε η λύση του docker ως minikube driver επομένως το k8s cluster τρέχει στο εσωτερικό ενός docker container.
+
+- To minikube κάνει expose το k8s VM/Container μέσω μιας host-only IP διεύθυνσης η οποία βρίσκεται με την εντολή minikube ip:
+192.168.49.2
+Αυτό επιβεβαιώνεται και με την εντολή kubectl cluster-info από την οποία βλέπουμε ότι το k8s master node βρίσκεται στην διεύθυνση: 
+https://192.168.49.2:8443
+
+- Για την παροχή πρόσβασης από τον έξω κόσμο προς το k8s cluster μπορούν να υλοποιηθούν δύο διαφορετικά components:
+	LoadBalancers και Ingresses.
+Από ότι κατάλαβα οι LoadBalancers είναι L4 LoadBalancers και τα Ingresses L7 LoadBalancers. Στο σύστημά μου έχω χρησιμοποιήσει μόνο L4 LoadBalancers.
+
+- Το κυρίως σύστημα χτίστηκε στο πρώτο λάπτοπ που τρέχει ubuntu και οι producers υλοποιήθηκαν σε ένα δεύτερο λάπτοπ που τρέχει windows.
+
+- Το σύστημά μου αποτελείται από κάποια διακριτά υποσυστήματα:
+	1) Database
+	2) Backend
+	3) Frontend
+	4) RMQ Server(s)
+	5) Consumer(s)
+	
+1) Για τη ΒΔ πρώτα δημιουργείται ένα persistent-volume σε συνδυασμό με ένα persistent-volume-claim με σκοπό τη διατήρηση των δεδομένων ακόμα και μετά από failures των DB pods.
+Επίσης τα admin credentials για τη ΒΔ δίνονται μέσω ενός k8s secret στο deployment της ΒΔ.
+Για την παροχή πρόσβασης στο pod της ΒΔ δημιουργείται και ένα k8s internal service (ClusterIP - protocol: TCP). Έτσι τα άλλα pods εντός του k8s cluster μπορούν να επικοινωνούν με τη ΒΔ.
+
+2) Το Backend καθώς θα πρέπει να επικοινωνεί με τη ΒΔ δέχεται στο deployment file του ένα configMap που του παρέχει την service μέσω της οποίας θα βρίσκει τη ΒΔ.
+Επίσης καθώς μέσω του Backend θα πρέπει να δημιουργούνται άλλα k8s components δημιουργείται ένα συγκεκριμένο k8s Role, ένα ServiceAccount και ένα RoleBinding που να τα συνδέει, δίνοντας δικαιώματα δημιουργίας, διαγραφής και αναζήτησης k8s πόρων όπως deployments, services, secrets στο default namespace.
+Αυτό το ServiceAccount συνδέεται επίσης με το deployment file του Backend.
+Τέλος για να παρέχεται πρόσβαση στο Backend από άλλα pods, δημιουργείται και ένα internal Service (ClusterIP) για το Backend.
+
+3) Για τη γνωστοποίηση της τοποθεσίας του Backend στο Frontend, δίνεται στο deployment file του Frontend μέσω ενός configMap η τοποθεσία της internal Service που οδηγεί στο Backend.
+Για την παροχή πρόσβασης στο Frontend από τον Browser δημιουργείται ένα external Service τύπου LoadBalancer. Κανονικά οι LoadBalancers στις cloud υποδομές υλοποιούνται από τον πάροχο της cloud υποδομής, όμως στο Minikube απλά γίνεται expose το Service σε ένα Port του Node. Ουσιαστικά δηλαδή πρόκειται για ένα Service τύπου NodePort το οποίο επίσης μπορεί να πάρει μια επιπλέον host-only IP, το οποίο γίνεται με την εντολή minikube tunnel.
+(To minikube tunnel λειτουργεί ως ένα process, δημιουργώντας ένα network route στον host προς την υπηρεσία CIDR του cluster χρησιμοποιώντας τη διεύθυνση IP του cluster ως gateway. Η εντολή minikube tunnel εκθέτει την εξωτερική IP απευθείας σε οποιοδήποτε πρόγραμμα εκτελείται στο λειτουργικό σύστημα του host.)
+
+Για το λόγο αυτό, για να μπορέσει να έχει πρόσβαση κάποιος άλλος υπολογιστής του ίδιου δικτύου σε ένα Service τύπου LoadBalancer πρέπει να επικοινωνήσει με τη διεύθυνση <nodeIP>:<ServicePort>. Όμως η IP του minikube cluster δεν είναι γνωστή στο router γιατί όπως αναφέρθηκε είναι host only. Έτσι για να γίνει η επικοινωνία πρέπει να προστεθεί η πληροφορία στο δεύτερο μηχάνημα ότι τα αιτήματα με παραλήπτη το IP του minikube θα πρέπει να έχουν ως gateway το Local IP του πρώτου μηχανήματος και να δρομολογηθούν εκεί. (To δεύτερο μηχάνημα τρέχει windows.)
+{
+route add 192.168.49.0 mask 255.255.255.0 192.168.1.154
+}
+Αντίστοιχα στο πρώτο μηχάνημα πρέπει να επιτραπεί το να προωθούνται μηνύματα με τελικό παραλήπτη το minikube cluster εκεί, καθώς η default πολιτική είναι να γίνονται drop όλα τα μηνύματα του chain FORWARD.
+{
+sudo sysctl net.ipv4.ip_forward=1
+sudo iptables -A FORWARD -j ACCEPT
+}
+
+Για την δρομολόγηση των αιτημάτων που δημιουργεί το Frontend προς το Backend, γίνεται χρήση ενός http proxy server (nginx) στο container του Frontend. Έτσι όλα τα αιτήματα των οποίων το uri περιλαμβάνει το "/api/" προωθούνται στο Backend.
+
+4) Κατά την εγγραφή κάθε χρήστη, το Backend αναλαμβάνει να δημιουργήσει ένα pod που υλοποιεί έναν RMQ Server μόνο για αυτόν τον χρήστη. 
+Ταυτόχρονα δημιουργεί και ένα internal Service που παρέχει πρόσβαση στο port 5672 του RMQ Server ωστε οι consumers να μπορούν να καταναλώνουν κατευθείαν μηνύματα από τον Server.
+Επίσης δημιουργεί και ένα external Service (LoadBalancer) που κάνει expose τα ports 15672 (Management) ώστε ο χρήστης να έχει εποπτεία του συστήματος και 5672 (amqp) ώστε οι producers να μπορούν να στείλουν μηνύματα στον RMQ Server από μηχάνημα εκτός του k8s cluster.
+
+5) Όταν ο χρήστης αιτείται τη δημιουργία ενός φίλτρου, τότε δημιουργείται ένας consumer ο οποίος δέχεται παραμέτρους σχετικά με το ποια μηνύματα θα παραλαμβάνει και σε ποιες περιπτώσεις θα τα καταγράφει στη ΒΔ (παράμετροι: exchange name, queue name, topic, logging conditions: [{variable, operator, value}]).
+Για να μπορέσει να εκτελέσει αυτές τις λειτουργίες χρειάζεται πρόσβαση τόσο στον RMQ Server όσο και στη ΒΔ. Για αυτό δέχεται σαν environment variables τα credentials του χρήστη, με τα οποία συνδέεται και στους δύο πόρους, την τοποθεσία των οποίων γνωρίζει μέσω των ανατίστοιχων Services.
+

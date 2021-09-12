@@ -5,17 +5,47 @@ mongoose.Promise = global.Promise;
 
 const username = "mple";
 const password = "123456";
-const RMQServerIP = "10.111.124.83";
+const RMQServerIP = "192.168.49.2";
+const RMQServerPort = "32193";
 
 const dataTimeframeInSecs = "6";
 const dataIntervalsInSecs = "1";
 
-const databaseService = "10.108.124.93";
+// const databaseService = "10.97.3.119";
+const dbIP = "192.168.49.2";
+const dbPort = "31250";
 
-const gatherData = async () => {
+const getDBdata = (db, dbData, loopsRemaining) => {
+  if (loopsRemaining > 0) {
+    db.db.command({ serverStatus: 1 }, function (err, result) {
+      // console.log("result: ", result.opcounters);
+      dbData.push(result.opcounters.insert);
+    });
+    loopsRemaining--;
+    setTimeout(() => {
+      getDBdata(db, dbData, loopsRemaining);
+    }, dataIntervalsInSecs * 1000);
+  } else {
+    let avgInsertRateToDB = 0;
+    // dbData.forEach((element, index) => {
+    //   if (index != 0) {
+    //     avgInsertRate += element;
+    //   }
+    // });
+    for (let i = 1; i < dbData.length; i++) {
+      avgInsertRateToDB += dbData[i] - dbData[i - 1];
+    }
+    avgInsertRateToDB =
+      avgInsertRateToDB / (dataTimeframeInSecs / dataIntervalsInSecs - 1);
+    getRMQdata(avgInsertRateToDB);
+    db.close();
+  }
+};
+
+const gatherData = () => {
   mongoose
     .connect(
-      `mongodb://username:password@${databaseService}:27017/mple?authSource=admin&w=1`,
+      `mongodb://username:password@${dbIP}:${dbPort}/mple?authSource=admin&w=1`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -40,21 +70,28 @@ const gatherData = async () => {
 
   db.on("error", console.error.bind(console, "connection error:"));
 
+  let dbData = [];
+  let loopsRemaining = dataTimeframeInSecs;
+
   db.once("open", function () {
     // db.db.stats(function (err, stats) {
     //   console.log("stats: ", stats);
     // });
     // db.db.stats();
-    db.db.command({ serverStatus: 1 }, function (err, result) {
-      console.log("result: ", result.opcounters);
-    });
+    getDBdata(db, dbData, loopsRemaining);
+    // db.db.command({ serverStatus: 1 }, function (err, result) {
+    //   console.log("result: ", result.opcounters);
+    // });
   });
 
   //   db.command({ serverStatus: 1, opcounters: 1 }, function (err, result) {
   //     console.log("result: ", result);
   //   });
+};
 
-  let url = `http://${RMQServerIP}:15672/`;
+const getRMQdata = async (avgInsertRateToDB) => {
+  // const getRMQdata = async () => {
+  let url = `http://${RMQServerIP}:${RMQServerPort}/`;
   let headers = {
     Authorization:
       "Basic " + Buffer.from(username + ":" + password).toString("base64"),
@@ -242,6 +279,7 @@ const gatherData = async () => {
 
   //   const db = {};
   //   db.mongoose = mongoose;
+  overviewData.avgInsertRateToDB = avgInsertRateToDB;
 
   console.log("OverviewData: ", overviewData);
 };

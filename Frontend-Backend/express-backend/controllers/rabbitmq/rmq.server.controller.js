@@ -129,7 +129,7 @@ deploymentCreator = (req, res, next) => {
                 // RABBITMQ_MANAGEMENT_SSL_KEYFILE: "",
                 // RABBITMQ_MANAGEMENT_SSL_VERIFY: "",
               ],
-              // resources: { limits: { memory: "128Mi", cpu: "500m" } },
+              // resources: { limits: { memory: "256Mi", cpu: "1000m" } },
               // volumes: [{name: ""}]
             },
           ],

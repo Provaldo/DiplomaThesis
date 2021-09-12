@@ -1,0 +1,92 @@
+- Σταθερό μέγεθος μηνύματος: 49 bytes
+
+- Σταθερό ποσοστό μηνυμάτων που ικανοποιούν τα loggging conditions: 100%
+
+- Σταθεροί πόροι cpu και memory διαθέσιμοι στο container της ΒΔ και του consumer: 128MB / 500m
+
+- Ανέβασα το όριο μνήμης του container της ΒΔ γιατί φαινόταν ότι λειτουργούσε στα όρια και ίσως δημιουργούσε bottleneck.
+Θα προσπαθήσω να το επιβεβαιώσω επαναλαμβάνοντας το πείραμα 1.5 (1.5.3) ώστε δω αν θα κρασάρει πάλι ο consumer.
+
+
+##################################################################################
+################################ Precision #######################################
+##################################################################################
+
+Το RabbitMQ δεν έβγαλε σωστές μετρήσεις για δύο λόγους κυρίως:
+- Το διάστημα δειγματοληψίας των 5 δευτερολέπτων που χρησιμοποίησα ήταν το κατώτατο όριο 
+δειγματοληψίας που προτείνει το RabbitMQ. Προφανώς δεν είναι καλά στημένο να παίρνει σωστές 
+μετρήσεις εκεί καθώς τα συνιστώμενα διαστήματα είναι 15, 30 ή και 60 δευτερόλεπτα, και στα 
+samples που κατέγραφα κάποια είχαν μηδενικές τιμές άρα δεν είχε γίνει μέτρηση σε εκείνο το 
+σημείο.
+- Καθώς το όλο σύστημα είναι ασύγχρονο και οι μετρήσεις συμβαίνουν ταυτόχρονα με τη 
+λειτουργία, δεν εγγυώνται απόλυτα ακριβή αποτελέσματα. Ακόμα και σε περιπτώσεις με έναν 
+producer έναν consumer και μια queue ο συνολικός αριθμός εισερχόμενων μηνυμάτων στο σύστημα 
+μπορεί να μην ταυτίζεται με τον αριθμό των εξερχόμενων μηνυμάτων. Σ αυτό το τελευταίο επίσης 
+συνεισφέρει το γεγονός ότι αν γίνουν επαναποστολές κάποιων μηνυμάτων, αυτές προστίθενται 
+στον αριθμό των εξερχόμενων μηνυμάτων, οδηγώντας σε διαφορετικούς ρυθμούς στην είσοδο και 
+στην έξοδο.
+
+The recommended metric collection interval is 15 second. To collect at an interval which 
+is closer to real-time, use 5 second - but not lower. For rate metrics, use a 
+time range that spans 4 metric collection intervals so that it can tolerate race-conditions 
+and is resilient to scrape failures.
+
+For production systems a collection interval of 30 or even 60 seconds is recommended. 
+Prometheus exporter API is designed to be scraped every 15 seconds, including production 
+systems.
+
+(There are two metrics for consumption rates (we really discourage the use of basic.get, 
+by the way) and one for publishing.
+
+If all messages published are routed to a single queue, total number of published messages 
+will be equal to Ready + Unacknowledged + Consumed.
+The math is greatly complicated by the fact that things are entirely asynchronous and even 
+with just one publisher, one consumer and one queue the numbers at a specific point in time 
+won't add up to zero (but on a long enough period they will give a good enough approximation).
+
+I also did not mention that a message can be routed to N queues. Such a message would be 
+counted N times in consumer delivery rates since every message is a completely independent 
+copy.
+
+    "So, we tried to do this, but we found out that the difference between Message Count in 
+    two different moments didn't add up to zero when we analyzed Published - Delivered in 
+    both moments (with no Redelivered messages in that period of time, we checked it), so 
+    we were wondering if any other metric played in this equation, because it seemed we 
+    were "losing track" of some messages."
+
+
+The do not add up because distributed and messaging systems specifically are inherently 
+concurrent and volatile. As you are trying to measure one thing, other things happen, and 
+they won't coordinate with your measurements (and neither you want them to, as it will 
+ruin throughput by several orders of magnitude).)
+
+##################################################################################
+################################ CPU units #######################################
+##################################################################################
+
+The CPU resource is measured in CPU units. One CPU, in Kubernetes, is equivalent to:
+
+    1 AWS vCPU
+    1 GCP Core
+    1 Azure vCore
+    1 Hyperthread on a bare-metal Intel processor with Hyperthreading
+
+Fractional values are allowed. A Container that requests 0.5 CPU is guaranteed half as much CPU as a Container that requests 1 CPU. You can use the suffix m to mean milli. For example 100m CPU, 100 milliCPU, and 0.1 CPU are all the same. Precision finer than 1m is not allowed.
+
+CPU is always requested as an absolute quantity, never as a relative quantity; 0.1 is the same amount of CPU on a single-core, dual-core, or 48-core machine.
+
+
+
+##################################################################################
+############################## Remote access #####################################
+##################################################################################
+
+How can I access a minikube cluster from a remote network?
+
+minikube’s primary goal is to quickly set up local Kubernetes clusters, and therefore we strongly discourage using minikube in production or for listening to remote traffic. By design, minikube is meant to only listen on the local network.
+
+However, it is possible to configure minikube to listen on a remote network. This will open your network to the outside world and is not recommended. If you are not fully aware of the security implications, please avoid using this.
+
+For the docker and podman driver, use --listen-address flag:
+
+minikube start --listen-address=0.0.0.0

@@ -88,6 +88,30 @@ db.createUser(
     roles: [ { role: "readWrite", db: "test2" } ]
 )
 
+##### Port forwarding to give access to another machine to local ips ###
+
+# things we also did before:
+# on ubuntu laptop:
+# ip route get 192.168.49.2
+
+# vrikame apo to -> ip a: 5) inet -> 192.168.49.1/24
+# vrikame apo to -> ip a: 3) inet -> 192.168.1.154
+
+# windows machine:
+route print
+route add 192.168.49.0 mask 255.255.255.0 192.168.1.154
+route print
+
+# ubuntu machine:
+sudo sysctl net.ipv4.ip_forward=1
+sudo iptables -A FORWARD -j ACCEPT
+
+# from the windows machine we ping successfully:
+# ping 192.168.1.154
+# ping 192.168.49.2
+
+# access from windows machine the rabbitmq server with ip: 
+# 192.168.49.2:32193
 
 ########################### interesting commands ###########################
 

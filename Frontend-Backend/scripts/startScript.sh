@@ -1,5 +1,8 @@
 # minikube
-/usr/bin/minikube start
+/usr/bin/minikube start --memory 4400 --cpus 3 --listen-address=0.0.0.0
+# /usr/bin/minikube start --memory=max --cpus=max
+# /usr/bin/minikube start --listen-address=0.0.0.0
+# /usr/bin/minikube start
 /usr/bin/minikube addons enable dashboard
 /usr/bin/minikube addons enable metrics-server
 

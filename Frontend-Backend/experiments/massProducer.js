@@ -4,13 +4,13 @@ const fetch = require("node-fetch");
 
 var username = "mple";
 var password = "123456";
-var RMQServerIP = "10.111.124.83";
+var RMQServerIP = "10.106.43.203";
 
 var exchangeName = "test";
 var routingKey = "temp.dist.severity";
 // var msg = { temp: 20, distance: 1000, severity: "critical" };
 
-var msgPublishRate = 20; // messages per second
+var msgPublishRate = 100; // messages per second
 var experimentDuration = 30; // how long the producer should publish messages for
 
 const dataTimeframeInSecs = "6";
