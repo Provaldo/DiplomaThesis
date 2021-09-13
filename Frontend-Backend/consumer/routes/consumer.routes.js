@@ -1,7 +1,7 @@
 const overviewController = require("../controllers/overview.controller");
 
 module.exports = function (app) {
-  app.get(
+  app.post(
     "/consumer/generateOverviewData",
     overviewController.generateOverviewData
   );

@@ -72,6 +72,36 @@ const AuthenticatedContent = (props) => {
   //   }
   // }, [props.auth.isAuthenticated, props.history]);
 
+  const startWebSocketConnection = () => {
+    let socket = new WebSocket(`ws://backend-service-ws/overview/`);
+
+    socket.onopen = (e) => {
+      alert("[open] Connection established");
+      alert("Sending to server");
+      socket.send("My name is John");
+    };
+
+    socket.onmessage = function (event) {
+      alert(`[message] Data received from server: ${event.data}`);
+    };
+
+    socket.onclose = function (event) {
+      if (event.wasClean) {
+        alert(
+          `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
+        );
+      } else {
+        // e.g. server process killed or network down
+        // event.code is usually 1006 in this case
+        alert("[close] Connection died");
+      }
+    };
+
+    socket.onerror = function (error) {
+      alert(`[error] ${error.message}`);
+    };
+  };
+
   const { username, email, roles, rabbitmqServer } = props.auth.user;
 
   useEffect(() => {
@@ -126,16 +156,10 @@ const AuthenticatedContent = (props) => {
         {activeTab == "Message Broker" && <RMQServer />}
         {activeTab == "Filters" && state.rmqServerExists && <RMQConsumers />}
         {activeTab == "Producers" && state.rmqServerExists && <RMQProducer />}
-      </div>
 
-      <div className="Auth-container">
-        <ul>
-          <li>
-            {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
-            {errors.message && <h6>{errors.message}</h6>}
-            <button onClick={props.testFunction}>Test Button</button>
-          </li>
-        </ul>
+        {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
+        {errors.message && <h6>{errors.message}</h6>}
+        {/* <button onClick={props.testFunction}>Test Button</button> */}
       </div>
     </div>
   );

@@ -223,3 +223,23 @@ export const getStreamErrors = (err) => (dispatch) => {
     type: CLEAR_RMQ_MESSAGES,
   });
 };
+
+export const setOverviewTimings = (timings) => (dispatch) => {
+  axios
+    .post("/api/rabbitmq/user/overview/setTimings", {
+      timeframe: timings.timeframe,
+      intervals: timings.intervals,
+    })
+    .then((res) => {
+      dispatch({
+        type: GET_RMQ_MESSAGES,
+        payload: res.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      });
+    });
+};

@@ -18,10 +18,20 @@ const fetch = require("node-fetch");
 // };
 
 generateOverviewData = async (req, res) => {
-  console.log("Consumer function generateOverviewData");
+  // let { timings, loopCounter } = req.body;
+  let { timings } = req.body;
+  // console.log(
+  //   "Consumer function generateOverviewData.",
+  //   "\nLoopCounter: ",
+  //   loopCounter,
+  //   "\nTimeframe: ",
+  //   timings.timeframe,
+  //   "\nIntervals: ",
+  //   timings.intervals
+  // );
 
-  const dataTimeframeInSecs = "300";
-  const dataIntervalsInSecs = "30";
+  const dataTimeframeInSecs = timings.timeframe.toString();
+  const dataIntervalsInSecs = timings.intervals.toString();
 
   let url = `http://rabbitmq-ext-svc-${authConfig.USERNAME}:15672/`;
   let username = `${authConfig.USERNAME}`;
@@ -287,7 +297,7 @@ generateOverviewData = async (req, res) => {
 
   if (errors) return;
 
-  console.log("OverviewData: ", overviewData);
+  // console.log("OverviewData: ", overviewData);
 
   res.status(200).send({
     message: "Overview data was generated successfully.",

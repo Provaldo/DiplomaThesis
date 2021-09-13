@@ -31,6 +31,24 @@ const RMQConsumers = (props) => {
     errors: {},
   });
 
+  const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      borderBottom: "1px dotted pink",
+      color: state.isSelected ? "blue" : "black",
+      padding: 15,
+    }),
+    control: (provided, state) => ({
+      ...provided,
+    }),
+    singleValue: (provided, state) => {
+      const opacity = state.isDisabled ? 0.5 : 1;
+      const transition = "opacity 300ms";
+
+      return { ...provided, opacity, transition };
+    },
+  };
+
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -148,38 +166,30 @@ const RMQConsumers = (props) => {
 
   const { errors } = state;
   return (
-    <div lassName="RMQ-consumer-container">
-      <div>consumers: </div>
-      {state.rmqConsumerExists &&
-        consumers.map((consumer) => {
-          return (
-            <div>
-              <div>{`-name: ${consumer.name}`}</div>
-              <ul>
-                <li>{`exchange name: ${consumer.exchangeName}`}</li>
-                <li>{`queue name: ${consumer.queueName}`}</li>
-                <li>{`routing key: ${consumer.routingKey}`}</li>
-                <li>
-                  logging conditions:{" "}
-                  {consumer.loggingConditions.map((condition) => {
-                    return (
-                      <div>{`${condition.variable} ${condition.operator} ${condition.value}`}</div>
-                    );
-                  })}
-                </li>
-                <li>{`created at: ${consumer.creationTimestamp}`}</li>
-              </ul>
-              <button
-                className="btn btn-danger"
-                onClick={() => onRMQConsumerDeletionRequest(consumer.name)}
-              >
-                Delete Consumer
-              </button>
-            </div>
-          );
-        })}
-      <form onSubmit={onRMQConsumerCreationRequest}>
-        <h6>Request RabbitMQ Consumer: </h6>
+    <div
+      style={{
+        marginLeft: 20,
+        marginRight: 20,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
+      }}
+    >
+      <form
+        onSubmit={onRMQConsumerCreationRequest}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          // alignItems: "center",
+          flexGrow: 0,
+          paddingTop: 20,
+          paddingRight: 15,
+          borderRightStyle: "solid",
+          borderRightWidth: 2,
+          borderRightColor: "black",
+        }}
+      >
+        <h3>Apply a custom Filter: </h3>
         <div className="form-group">
           <input
             type="text"
@@ -272,6 +282,7 @@ const RMQConsumers = (props) => {
             </div>
           )}
           <Select
+            styles={customStyles}
             className={classnames("basic-single", {
               "is-invalid": errors.rmqLoggingConditionsOperator,
             })}
@@ -320,9 +331,8 @@ const RMQConsumers = (props) => {
           </button>
         </div>
         <div className="form-group">
-          <h6>
-            Please provide your password, for the consumer to be able to connect
-            to the RabbitMQ server:
+          <h6 style={{ whiteSpace: "pre" }}>
+            {`Please provide your password, for the\nproducer to be able to connect to the\nRabbitMQ server:`}
           </h6>
           <input
             type="password"
@@ -358,6 +368,57 @@ const RMQConsumers = (props) => {
           </button>
         </div>
       </form>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          marginLeft: 15,
+        }}
+      >
+        <h3
+          style={{
+            alignSelf: "center",
+            borderBottomStyle: "solid",
+            borderBottomWidth: 2,
+            borderColor: "green",
+          }}
+        >
+          Active Filters:{" "}
+        </h3>
+        <div
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+        >
+          {state.rmqConsumerExists &&
+            consumers.map((consumer) => {
+              return (
+                <div style={{ marginRight: 20 }}>
+                  <h4>{`- Name: ${consumer.name}`}</h4>
+                  <ul>
+                    <li>{`Exchange name: ${consumer.exchangeName}`}</li>
+                    <li>{`Queue name: ${consumer.queueName}`}</li>
+                    <li>{`Binding key: ${consumer.routingKey}`}</li>
+                    <li>
+                      Logging conditions:{" "}
+                      {consumer.loggingConditions.map((condition) => {
+                        return (
+                          <div>{`${condition.variable} ${condition.operator} ${condition.value}`}</div>
+                        );
+                      })}
+                    </li>
+                    <li>{`Created at: ${consumer.creationTimestamp}`}</li>
+                  </ul>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => onRMQConsumerDeletionRequest(consumer.name)}
+                  >
+                    Delete Consumer
+                  </button>
+                </div>
+              );
+            })}
+        </div>
+      </div>
     </div>
   );
 };

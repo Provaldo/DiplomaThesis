@@ -67,4 +67,10 @@ module.exports = function (app) {
     // rmqOverview.requestDataGenerationFromConsumer,
     rmqOverview.createStream
   );
+
+  app.post(
+    "/api/rabbitmq/user/overview/setTimings",
+    [authSession.verifySession],
+    rmqOverview.setOverviewTimings
+  );
 };

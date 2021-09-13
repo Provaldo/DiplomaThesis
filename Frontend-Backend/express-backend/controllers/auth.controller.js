@@ -72,6 +72,7 @@ exports.signin = (req, res) => {
     .populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
+        console.log("I'm here. err: ", err, "\nuser: ", user);
         res.status(500).send({ message: err });
         return;
       }

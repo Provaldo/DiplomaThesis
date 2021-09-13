@@ -72,6 +72,7 @@ exposeConsumerIfExists = (req, res, next) => {
                 //   "\nThe Internal-Service-creation API response.body is: ",
                 //   response.body
                 // );
+                console.log("Created overview service");
                 next();
               })
               .catch((err) => {
@@ -103,21 +104,34 @@ createStream = async (req, res) => {
   req.stopFlag = false;
 
   req.on("close", () => {
-    console.log("Connection closed at: ", Date.now());
+    // console.log("Connection closing at: ", Date.now());
     req.stopFlag = true;
     // return;
   });
 
-  console.log("Starting to send");
+  // console.log("Starting to send");
   setTimeout(() => continuousSend(req, res), 1000); // This timeout is necessary for the service exposing the consumer to have time to be established
 };
 
 const continuousSend = async (req, res) => {
   if (!req.stopFlag) {
     // console.log("Before gatherOverviewData is called");
-    res.overviewData = await gatherOverviewData(req.user.username, res);
+
+    let timings = {
+      timeframe: req.session.overviewTimings.timeframe,
+      intervals: req.session.overviewTimings.intervals,
+    };
+
+    res.overviewData = await gatherOverviewData(
+      req.user.username,
+      res,
+      timings
+    );
     // console.log("After gatherOverviewData");
     // console.log("res.overviewData: ", res.overviewData);
+    // console.log(
+    //   `\nTimeframe: ${req.session.overviewTimings.timeframe}\nIntervals: ${req.session.overviewTimings.intervals}`
+    // );
 
     if (res.overviewData !== -1) {
       const data = `data: ${JSON.stringify(res.overviewData)}\n\n`;
@@ -129,21 +143,24 @@ const continuousSend = async (req, res) => {
     } else {
       const endStreamEvent = "event: endStreamEvent\n\n";
       res.write(endStreamEvent);
+
+      deleteConsumerOverviewService(req.user.username);
     }
   } else {
+    // console.log("Connection closed at: ", Date.now());
     deleteConsumerOverviewService(req.user.username);
     dbController.updateOverviewDataOnDB(req.session.userId, res.overviewData);
     return;
   }
 };
 
-const gatherOverviewData = async (username, res) => {
+const gatherOverviewData = async (username, res, timings) => {
   try {
-    const axiosRes = await axios.get(
-      `http://consumer-overview-svc-${username}:5000/consumer/generateOverviewData`
+    const axiosRes = await axios.post(
+      `http://consumer-overview-svc-${username}:5000/consumer/generateOverviewData`,
+      { timings }
     );
     if (axiosRes.statusText == "OK") {
-      // console.log("axiosRes is ok");
       return axiosRes.data.overviewData;
     } else {
       console.log("axiosRes is not ok: ", axiosRes);
@@ -233,9 +250,23 @@ const deleteConsumerOverviewService = (username) => {
   });
 };
 
+const setOverviewTimings = (req, res) => {
+  const { timeframe, intervals } = req.body;
+  req.session.overviewTimings = { timeframe, intervals };
+
+  // console.log(
+  //   `OK. overviewTimings.timeframe: ${req.session.overviewTimings.timeframe}\noverviewTimings.intervals: ${req.session.overviewTimings.intervals}`
+  // );
+
+  res.status(200).send({
+    message: `OK. overviewTimings = ${timeframe}, ${intervals}`,
+  });
+};
+
 const rmqOverview = {
   exposeConsumerIfExists,
   createStream,
+  setOverviewTimings,
 };
 
 module.exports = rmqOverview;

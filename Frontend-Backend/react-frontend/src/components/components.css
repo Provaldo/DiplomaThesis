@@ -19,7 +19,7 @@
   min-height: 80vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: flex-start;
   text-align: start;
   font-size: calc(10px + 2vmin);
@@ -27,20 +27,6 @@
   /* border-style: solid;
   border-color: red;
   border-width: 2px; */
-}
-
-.RMQ-server-container {
-  justify-content: flex-start;
-  border-style: solid;
-  border-color: black;
-  border-width: 2px;
-}
-
-.RMQ-consumer-container {
-  justify-content: flex-start;
-  border-style: solid;
-  border-color: black;
-  border-width: 2px;
 }
 
 /* .styled-button-tab {

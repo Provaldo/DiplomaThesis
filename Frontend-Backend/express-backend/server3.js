@@ -87,7 +87,7 @@ require("./routes/rabbitmq.routes")(app);
 require("./routes/test.routes")(app);
 
 // set port, listen for requests
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Running on port ${PORT}`);
+const PORT_HTTP = process.env.PORT_HTTP || 5000;
+app.listen(PORT_HTTP, () => {
+  console.log(`Running on port ${PORT_HTTP}`);
 });

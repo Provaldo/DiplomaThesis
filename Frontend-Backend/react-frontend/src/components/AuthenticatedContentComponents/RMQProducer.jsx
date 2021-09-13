@@ -96,8 +96,11 @@ const RMQProducer = (props) => {
 
   const { errors } = state;
   return (
-    <form onSubmit={onRMQProducerCreationRequest}>
-      <h6>Request RabbitMQ Producer: </h6>
+    <form
+      onSubmit={onRMQProducerCreationRequest}
+      style={{ margin: 20, alignSelf: "flex-start" }}
+    >
+      <h3>Request RabbitMQ Producer: </h3>
       <div className="form-group">
         <input
           type="text"
@@ -183,9 +186,8 @@ const RMQProducer = (props) => {
         </button>
       </div>
       <div className="form-group">
-        <h6>
-          Please provide your password, for the producer to be able to connect
-          to the RabbitMQ server:
+        <h6 style={{ whiteSpace: "pre" }}>
+          {`Please provide your password, for the\nproducer to be able to connect to the\nRabbitMQ server:`}
         </h6>
         <input
           type="password"

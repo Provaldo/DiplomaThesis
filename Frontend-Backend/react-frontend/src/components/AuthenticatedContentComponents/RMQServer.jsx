@@ -85,7 +85,7 @@ const RMQServer = (props) => {
 
   const { errors } = state;
   return (
-    <div className="RMQ-server-container">
+    <div style={{ margin: 20 }}>
       <div>rabbitmqServer: </div>
       <div>
         {state.rmqServerExists && `name: ${rabbitmqServer.deploymentName}`}
@@ -153,8 +153,8 @@ const RMQServer = (props) => {
         </button>
       )}
       {state.rmqConsumerExists && (
-        <h6>
-          Message broker CANNOT be deleted without deleting all the active
+        <h6 style={{ marginTop: 10 }}>
+          *Message broker CANNOT be deleted without deleting all the active
           filters first.
         </h6>
       )}
