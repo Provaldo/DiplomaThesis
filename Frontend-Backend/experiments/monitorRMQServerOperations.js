@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fetch = require("node-fetch");
+const { csvFileCreator } = require("./csvFileCreator");
 
 // const username = "mple";
 // const password = "123456";
@@ -14,6 +15,7 @@ exports.getRMQdata = async (
   containerResources,
   dbSamples,
   avgInsertRateToDBperSecond,
+  insertRateToDBperSecondVariance,
   dataTimeframeInSecs,
   dataIntervalsInSecs,
   msgPublishRate,
@@ -114,11 +116,26 @@ exports.getRMQdata = async (
             json.message_stats.ack != undefined &&
             json.message_stats.ack_details != undefined
           ) {
+            let msgsAcknowledgedVariance = 0;
+            let samples = json.message_stats.ack_details.samples;
+            let avg = json.message_stats.ack_details.avg_rate;
+
+            for (let i = 1; i < samples.length; i++) {
+              let samplesDifference = samples[i - 1] - samples[i];
+
+              msgsAcknowledgedVariance += Math.pow(avg - samplesDifference, 2);
+            }
+            msgsAcknowledgedVariance =
+              msgsAcknowledgedVariance / (samples.length - 1);
+            let msgsAcknowledgedperSecondVariance =
+              msgsAcknowledgedVariance / dataIntervalsInSecs;
+
             overviewData.msgsAcknowledged = {
               //   totalMsgs: json.message_stats.ack,
               //   avgValue: json.message_stats.ack_details.avg,
               avgRate: json.message_stats.ack_details.avg_rate,
               samples: json.message_stats.ack_details.samples,
+              rateVariance: msgsAcknowledgedperSecondVariance,
             };
             //   } else if (json.message_stats.ack != undefined) {
             //     overviewData.msgsAcknowledged = {
@@ -152,11 +169,26 @@ exports.getRMQdata = async (
             json.message_stats.publish != undefined &&
             json.message_stats.publish_details != undefined
           ) {
+            let msgsPublishedVariance = 0;
+            let samples = json.message_stats.publish_details.samples;
+            let avg = json.message_stats.publish_details.avg_rate;
+
+            for (let i = 1; i < samples.length; i++) {
+              let samplesDifference = samples[i - 1] - samples[i];
+
+              msgsPublishedVariance += Math.pow(avg - samplesDifference, 2);
+            }
+            msgsPublishedVariance =
+              msgsPublishedVariance / (samples.length - 1);
+            let msgsPublishedPerSecondVariance =
+              msgsPublishedVariance / dataIntervalsInSecs;
+
             overviewData.msgsPublished = {
               //   totalMsgs: json.message_stats.publish,
               //   avgValue: json.message_stats.publish_details.avg,
               avgRate: json.message_stats.publish_details.avg_rate,
               samples: json.message_stats.publish_details.samples,
+              rateVariance: msgsPublishedPerSecondVariance,
             };
             //   } else if (json.message_stats.publish != undefined) {
             //     overviewData.msgsPublished = {
@@ -232,6 +264,10 @@ exports.getRMQdata = async (
     overviewData.msgsPublished.avgRate
   );
   console.log(
+    "Variance of observed publish frequency: ",
+    overviewData.msgsPublished.rateVariance
+  );
+  console.log(
     "Observed frequency of message delivery to consumers: ",
     overviewData.msgsDeliveredToConsumers.avgRate
   );
@@ -240,36 +276,61 @@ exports.getRMQdata = async (
     overviewData.msgsAcknowledged.avgRate
   );
   console.log(
+    "Variance of observed frequency of message acknowledgement from consumers: ",
+    overviewData.msgsAcknowledged.rateVariance
+  );
+  console.log(
     "Observed frequency of insert operations to DB: ",
     avgInsertRateToDBperSecond
+  );
+  console.log(
+    "Variance of observed frequency of insert operations to DB: ",
+    insertRateToDBperSecondVariance
   );
   let expectedInserts = nrOfProducers * msgPublishRate * experimentDuration;
   console.log(
     `\nExpected inserts to the DB: ${nrOfProducers} cons * ${msgPublishRate} msgs/s * ${experimentDuration} sec = ${expectedInserts} inserts`
   );
   console.log("Actual inserts to the DB:  inserts");
-  console.log(
-    "\nConsumer container CPU limit: ",
-    containerResources.consumerCPU
-  );
-  console.log(
-    "Consumer container Memory limit: ",
-    containerResources.consumerMEM
-  );
-  console.log(
-    "RMQ Server container CPU limit: ",
-    containerResources.RMQServerCPU
-  );
-  console.log(
-    "RMQ Server container Memory limit: ",
-    containerResources.RMQServerMEM
-  );
-  console.log("Database container CPU limit: ", containerResources.dbCPU);
-  console.log("Database container Memory limit: ", containerResources.dbMEM);
+  // console.log(
+  //   "\nConsumer container CPU limit: ",
+  //   containerResources.consumerCPU
+  // );
+  // console.log(
+  //   "Consumer container Memory limit: ",
+  //   containerResources.consumerMEM
+  // );
+  // console.log(
+  //   "RMQ Server container CPU limit: ",
+  //   containerResources.RMQServerCPU
+  // );
+  // console.log(
+  //   "RMQ Server container Memory limit: ",
+  //   containerResources.RMQServerMEM
+  // );
+  // console.log("Database container CPU limit: ", containerResources.dbCPU);
+  // console.log("Database container Memory limit: ", containerResources.dbMEM);
 
   // #######################################################################
   // #######################################################################
   // #######################################################################
+  let csvData = {};
+
+  csvData.inputFrequency = {};
+  csvData.inputFrequency.average = overviewData.msgsPublished.avgRate;
+  csvData.inputFrequency.variance = overviewData.msgsPublished.rateVariance;
+  csvData.inputFrequency.rateSamples = [];
+
+  csvData.consumingFrequency = {};
+  csvData.consumingFrequency.average = overviewData.msgsAcknowledged.avgRate;
+  csvData.consumingFrequency.variance =
+    overviewData.msgsAcknowledged.rateVariance;
+  csvData.consumingFrequency.rateSamples = [];
+
+  csvData.dbInsertFrequency = {};
+  csvData.dbInsertFrequency.average = avgInsertRateToDBperSecond;
+  csvData.dbInsertFrequency.variance = insertRateToDBperSecondVariance;
+  csvData.dbInsertFrequency.rateSamples = [];
 
   if (overviewData.msgsAcknowledged.samples != undefined) {
     for (
@@ -296,6 +357,9 @@ exports.getRMQdata = async (
       console.log(
         " [*] Sample end timestamp: ",
         overviewData.msgsAcknowledged.samples[index - 1].timestamp
+      );
+      csvData.consumingFrequency.rateSamples.push(
+        (currentValue - previousValue) / dataIntervalsInSecs
       );
 
       previousValue =
@@ -330,6 +394,9 @@ exports.getRMQdata = async (
         " [$] Sample end timestamp: ",
         overviewData.msgsPublished.samples[index - 1].timestamp
       );
+      csvData.inputFrequency.rateSamples.push(
+        (currentValue - previousValue) / dataIntervalsInSecs
+      );
 
       // let normalIndex =
       //   overviewData.msgsAcknowledged.samples.length - index - 1;
@@ -354,10 +421,17 @@ exports.getRMQdata = async (
         " [@] Sample end timestamp: ",
         dbSamples[normalIndex].timestamp
       );
+      csvData.dbInsertFrequency.rateSamples.push(
+        dbSamples[normalIndex].insertRatePerSecond
+      );
     }
   }
 
   overviewData.avgInsertRateToDBperSecond = avgInsertRateToDBperSecond;
+  overviewData.insertRateToDBperSecondVariance =
+    insertRateToDBperSecondVariance;
+
+  csvFileCreator(csvData);
 
   delete overviewData.msgsAcknowledged.samples;
   delete overviewData.msgsDeliveredToConsumers.samples;

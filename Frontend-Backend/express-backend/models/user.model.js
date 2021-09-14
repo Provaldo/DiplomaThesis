@@ -48,6 +48,11 @@ const User = mongoose.model(
       },
     ],
     overviewData: {
+      DBdata: {
+        timeframeNumberOfMessages: Number,
+        timeframeMessageInsertRate: Number,
+        totalNumberOfMessages: Number,
+      },
       msgsRcvdByExchanges: Number,
       msgsRoutedByExchanges: Number,
       incomingMsgRateToExchanges: [

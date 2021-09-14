@@ -169,10 +169,10 @@ createConsumerDeployment = (req, res, next) => {
                   value: `${req.user.username}`,
                 },
               ],
-              resources: {
-                limits: { memory: "128Mi", cpu: "1000m" },
-                requests: { memory: "48Mi", cpu: "500m" },
-              },
+              // resources: {
+              //   limits: { memory: "128Mi", cpu: "1000m" },
+              //   requests: { memory: "48Mi", cpu: "500m" },
+              // },
               // volumes: [{name: ""}]
             },
           ],

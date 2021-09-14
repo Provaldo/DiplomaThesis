@@ -19,10 +19,10 @@ spec:
         - name: backend
           image: provaldo/dipl-backend:k8s
           imagePullPolicy: Always
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+          # resources:
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "500m"
           ports:
             - containerPort: 5000
           env:

@@ -79,20 +79,29 @@ const getDBdata = (db, dbSamples, loopsRemaining, previousInsertsValue) => {
     for (let i = 0; i < dbSamples.length; i++) {
       avgInsertRateToDB += dbSamples[i].insertValueDifference;
     }
-    // avgInsertRateToDB =
-    //   avgInsertRateToDB / (dataTimeframeInSecs / dataIntervalsInSecs);
-    avgInsertRateToDB =
-      avgInsertRateToDB / (dataTimeframeInSecs / dataIntervalsInSecs + 1);
+    avgInsertRateToDB = avgInsertRateToDB / dbSamples.length;
     let avgInsertRateToDBperSecond = avgInsertRateToDB / dataIntervalsInSecs;
     // console.log(
     //   "\n [***] Average insert rate to DB per second: ",
     //   avgInsertRateToDBperSecond
     // );
+    let insertRateToDBVariance = 0;
+    for (let i = 0; i < dbSamples.length; i++) {
+      insertRateToDBVariance += Math.pow(
+        avgInsertRateToDB - dbSamples[i].insertValueDifference,
+        2
+      );
+    }
+    insertRateToDBVariance = insertRateToDBVariance / dbSamples.length;
+    let insertRateToDBperSecondVariance =
+      insertRateToDBVariance / dataIntervalsInSecs;
+
     RMQServerData.getRMQdata(
       config,
       containerResources,
       dbSamples,
       avgInsertRateToDBperSecond,
+      insertRateToDBperSecondVariance,
       dataTimeframeInSecs,
       dataIntervalsInSecs,
       msgPublishRate,

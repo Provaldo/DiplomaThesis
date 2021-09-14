@@ -17,10 +17,10 @@ spec:
       containers:
         - name: mongodb
           image: mongo:4.4.6-bionic
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+          # resources:
+          #   limits:
+          #     memory: "512Mi"
+          #     cpu: "500m"
           ports:
             - containerPort: 27017
           env:
