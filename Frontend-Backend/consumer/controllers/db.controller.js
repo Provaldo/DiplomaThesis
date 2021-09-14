@@ -10,7 +10,7 @@ exports.recordMessage = (condition, msg) => {
     content: JSON.parse(msg.content.toString()),
     serialNumber: msg.fields.deliveryTag,
     topic: rmqConfig.RMQ_ROUTING_KEY, // THIS COULD BE REPLACED BY SOMETHING ELSE THAT WOULD LOG THE ACTUAL TOPIC OF THE SENT MESSAGE AND NOT THE ROUTING KEY
-    createdAt: msg.properties.timestamp,
+    producedAt: msg.properties.timestamp,
     receivedAt: Date.now(),
     conditionMet: condition,
   });
@@ -24,4 +24,59 @@ exports.recordMessage = (condition, msg) => {
       return 1;
     }
   });
+};
+
+exports.gatherDBdata = async (timeframe) => {
+  let timestampCompare = new Date(Date.now() - timeframe * 1000).toISOString();
+  console.log("timestampCompare: ", timestampCompare);
+
+  let temp = await Promise.all([
+    Message.countDocuments(
+      { createdAt: { $gt: timestampCompare } }
+      // (err, count) => {
+      //   if (!err) {
+      //     let DBdata = {};
+      //     console.log(
+      //       "Number of documents inserted in this timeframe: ",
+      //       count
+      //     );
+      //     DBdata.numberOfMessages = count;
+      //     DBdata.messageInsertRate = count / timeframe;
+      //     return count;
+      // } else {
+      //   console.log("DB query error: ", err);
+      // }
+      // }
+    ),
+    Message.estimatedDocumentCount(),
+  ]);
+
+  let timeframeDocs = temp[0];
+  let allDocs = temp[1];
+  let DBdata = {};
+
+  console.log(
+    "Number of documents inserted in this timeframe: ",
+    timeframeDocs,
+    "\nNumber of all documents in the collections: ",
+    allDocs
+  );
+  DBdata.timeframeNumberOfMessages = timeframeDocs;
+  DBdata.timeframeMessageInsertRate = timeframeDocs / timeframe;
+  DBdata.totalNumberOfMessages = allDocs;
+  return DBdata;
+
+  // ]).then(([timeframeDocs, allDocs]) => {
+  //   let DBdata = {};
+  //   console.log(
+  //     "Number of documents inserted in this timeframe: ",
+  //     timeframeDocs,
+  //     "\nNumber of all documents in the collections: ",
+  //     allDocs
+  //   );
+  //   DBdata.timeframeNumberOfMessages = timeframeDocs;
+  //   DBdata.timeframeMessageInsertRate = timeframeDocs / timeframe;
+  //   DBdata.totalNumberOfMessages = allDocs;
+  //   return DBdata;
+  // });
 };

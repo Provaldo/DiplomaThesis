@@ -8,6 +8,8 @@ const authConfig = require("../config/auth.config");
 
 const fetch = require("node-fetch");
 
+const { gatherDBdata } = require("../controllers/db.controller");
+
 // createProcess = (req, res) => {
 //   consumerProcess.createConsumerProcess(req.body);
 //   consumerConfig.NR_OF_CONSUMERS = ++consumerConfig.NR_OF_CONSUMERS;
@@ -55,73 +57,75 @@ generateOverviewData = async (req, res) => {
   //   alert("HTTP-Error: " + response.status);
   // }
 
-  await fetch(
-    url +
-      `api/exchanges?msg_rates_age=${dataTimeframeInSecs}&msg_rates_incr=${dataIntervalsInSecs}&data_rates_age=${dataTimeframeInSecs}&data_rates_incr=${dataIntervalsInSecs}`,
-    {
-      method: "GET",
-      headers: headers,
-    }
-  )
-    .then(async (response) => {
-      // console.log("exchanges response: ", response);
-      if (response.ok) {
-        // if HTTP-status is 200-299
-        let json = await response.json();
-        // console.log("\nExchanges data is :", json);
-        overviewData.msgsRcvdByExchanges = 0;
-        overviewData.msgsRoutedByExchanges = 0;
-        overviewData.incomingMsgRateToExchanges = [];
-        json.map((exchange, index) => {
-          if (!(exchange.name.startsWith("amq.") || exchange.name === "")) {
-            if (
-              exchange.message_stats != undefined &&
-              typeof exchange.message_stats.publish_in === "number"
-            ) {
-              overviewData.msgsRcvdByExchanges +=
-                exchange.message_stats.publish_in;
-            }
-            if (
-              exchange.message_stats != undefined &&
-              typeof exchange.message_stats.publish_out === "number"
-            ) {
-              overviewData.msgsRoutedByExchanges +=
-                exchange.message_stats.publish_out;
-            }
-            if (
-              exchange.message_stats != undefined &&
-              exchange.message_stats.publish_in_details != undefined
-            ) {
-              overviewData.incomingMsgRateToExchanges[exchange] = {
-                exchangeName: exchange.name,
-                avgValue: exchange.message_stats.publish_in_details.avg,
-                avgRate: exchange.message_stats.publish_in_details.avg_rate,
-              };
-            }
-          }
-        });
-        // console.log(
-        //   "Messages published to exchanges: ",
-        //   overviewData.msgsRcvdByExchanges,
-        //   "\nMessages routed from exchanges: ",
-        //   overviewData.msgsRoutedByExchanges,
-        //   "\nIncoming message rate to exchanges: ",
-        //   overviewData.incomingMsgRateToExchanges
-        // );
-      } else {
-        // alert("HTTP-Error: " + response.status);
-        console.log("HTTP-Error: " + response.status);
-        res.status(500).send({ message: "HTTP-Error: " + response.status });
-        errors++;
-      }
-    })
-    .catch((err) => {
-      console.log("1st request error: ", err);
-      res.status(500).send({ message: "Unknown error: " + err });
-      errors++;
-    });
+  overviewData.DBdata = await gatherDBdata(timings.timeframe);
 
-  if (errors) return;
+  // await fetch(
+  //   url +
+  //     `api/exchanges?msg_rates_age=${dataTimeframeInSecs}&msg_rates_incr=${dataIntervalsInSecs}&data_rates_age=${dataTimeframeInSecs}&data_rates_incr=${dataIntervalsInSecs}`,
+  //   {
+  //     method: "GET",
+  //     headers: headers,
+  //   }
+  // )
+  //   .then(async (response) => {
+  //     // console.log("exchanges response: ", response);
+  //     if (response.ok) {
+  //       // if HTTP-status is 200-299
+  //       let json = await response.json();
+  //       // console.log("\nExchanges data is :", json);
+  //       overviewData.msgsRcvdByExchanges = 0;
+  //       overviewData.msgsRoutedByExchanges = 0;
+  //       overviewData.incomingMsgRateToExchanges = [];
+  //       json.map((exchange, index) => {
+  //         if (!(exchange.name.startsWith("amq.") || exchange.name === "")) {
+  //           if (
+  //             exchange.message_stats != undefined &&
+  //             typeof exchange.message_stats.publish_in === "number"
+  //           ) {
+  //             overviewData.msgsRcvdByExchanges +=
+  //               exchange.message_stats.publish_in;
+  //           }
+  //           if (
+  //             exchange.message_stats != undefined &&
+  //             typeof exchange.message_stats.publish_out === "number"
+  //           ) {
+  //             overviewData.msgsRoutedByExchanges +=
+  //               exchange.message_stats.publish_out;
+  //           }
+  //           if (
+  //             exchange.message_stats != undefined &&
+  //             exchange.message_stats.publish_in_details != undefined
+  //           ) {
+  //             overviewData.incomingMsgRateToExchanges[exchange] = {
+  //               exchangeName: exchange.name,
+  //               avgValue: exchange.message_stats.publish_in_details.avg,
+  //               avgRate: exchange.message_stats.publish_in_details.avg_rate,
+  //             };
+  //           }
+  //         }
+  //       });
+  //       // console.log(
+  //       //   "Messages published to exchanges: ",
+  //       //   overviewData.msgsRcvdByExchanges,
+  //       //   "\nMessages routed from exchanges: ",
+  //       //   overviewData.msgsRoutedByExchanges,
+  //       //   "\nIncoming message rate to exchanges: ",
+  //       //   overviewData.incomingMsgRateToExchanges
+  //       // );
+  //     } else {
+  //       // alert("HTTP-Error: " + response.status);
+  //       console.log("HTTP-Error: " + response.status);
+  //       res.status(500).send({ message: "HTTP-Error: " + response.status });
+  //       errors++;
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     console.log("1st request error: ", err);
+  //     res.status(500).send({ message: "Unknown error: " + err });
+  //     errors++;
+  //   });
+
+  // if (errors) return;
 
   await fetch(
     url +
@@ -181,10 +185,15 @@ generateOverviewData = async (req, res) => {
             json.message_stats.ack != undefined &&
             json.message_stats.ack_details != undefined
           ) {
+            let length = json.message_stats.ack_details.samples.length;
+
             overviewData.msgsAcknowledged = {
               totalMsgs: json.message_stats.ack,
               avgValue: json.message_stats.ack_details.avg,
               avgRate: json.message_stats.ack_details.avg_rate,
+              currentDifference:
+                json.message_stats.ack_details.samples[0].sample -
+                json.message_stats.ack_details.samples[length - 1].sample,
             };
           } else if (json.message_stats.ack != undefined) {
             overviewData.msgsAcknowledged = {
@@ -217,10 +226,17 @@ generateOverviewData = async (req, res) => {
             json.message_stats.drop_unroutable != undefined &&
             json.message_stats.drop_unroutable_details != undefined
           ) {
+            let length =
+              json.message_stats.drop_unroutable_details.samples.length;
+
             overviewData.msgsDroppedAsUnroutable = {
               totalMsgs: json.message_stats.drop_unroutable,
               avgValue: json.message_stats.drop_unroutable_details.avg,
               avgRate: json.message_stats.drop_unroutable_details.avg_rate,
+              currentDifference:
+                json.message_stats.drop_unroutable_details.samples[0].sample -
+                json.message_stats.drop_unroutable_details.samples[length - 1]
+                  .sample,
             };
           } else if (json.message_stats.drop_unroutable != undefined) {
             overviewData.msgsDroppedAsUnroutable = {
@@ -237,10 +253,15 @@ generateOverviewData = async (req, res) => {
             json.message_stats.publish != undefined &&
             json.message_stats.publish_details != undefined
           ) {
+            let length = json.message_stats.publish_details.samples.length;
+
             overviewData.msgsPublished = {
               totalMsgs: json.message_stats.publish,
               avgValue: json.message_stats.publish_details.avg,
               avgRate: json.message_stats.publish_details.avg_rate,
+              currentDifference:
+                json.message_stats.publish_details.samples[0].sample -
+                json.message_stats.publish_details.samples[length - 1].sample,
             };
           } else if (json.message_stats.publish != undefined) {
             overviewData.msgsPublished = {

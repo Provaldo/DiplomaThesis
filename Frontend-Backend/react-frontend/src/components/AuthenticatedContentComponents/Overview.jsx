@@ -202,7 +202,9 @@ const Overview = (props) => {
         return { ...s, invalidSelection: false };
       });
 
-      endStream();
+      if (streaming) {
+        endStream();
+      }
 
       let timings = {};
       timings = {
