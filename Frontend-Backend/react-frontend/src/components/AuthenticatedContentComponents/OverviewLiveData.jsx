@@ -52,6 +52,15 @@ const OverviewLiveData = (props) => {
           {msgsDroppedAsUnroutable && (
             <h5>{`Incoming rate of unroutable messages: ${msgsDroppedAsUnroutable.avgRate}`}</h5>
           )}
+          {msgsPublished && msgsDroppedAsUnroutable && (
+            <h5>
+              {`Percentage of received messages that were unroutable: ${
+                (msgsDroppedAsUnroutable.currentDifference /
+                  msgsPublished.currentDifference) *
+                100
+              }%`}
+            </h5>
+          )}
         </div>
         <div
           style={{
@@ -72,6 +81,16 @@ const OverviewLiveData = (props) => {
           )}
           {msgsAcknowledged && (
             <h5>{`Message process rate by Filters: ${msgsAcknowledged.avgRate}`}</h5>
+          )}
+          {msgsPublished && msgsDroppedAsUnroutable && msgsAcknowledged && (
+            <h5>
+              {`Percentage of routable messages that were acknowledged: ${
+                (msgsAcknowledged.currentDifference /
+                  (msgsPublished.currentDifference -
+                    msgsDroppedAsUnroutable.currentDifference)) *
+                100
+              }%`}
+            </h5>
           )}
           {numberOfQueues && <h5>{`Number of Queues: ${numberOfQueues}`}</h5>}
           {msgsInQueues && (
@@ -98,6 +117,13 @@ const OverviewLiveData = (props) => {
           {DBdata && (
             <h5>{`Message insertion rate: ${DBdata.timeframeMessageInsertRate}`}</h5>
           )}
+          {msgsAcknowledged && DBdata && (
+            <h5>{`Percentage of acknowledged messages inserted to the DB: ${
+              (DBdata.timeframeNumberOfMessages /
+                msgsAcknowledged.currentDifference) *
+              100
+            }%`}</h5>
+          )}
         </div>
       </div>
 
@@ -112,18 +138,40 @@ const OverviewLiveData = (props) => {
           alignItems: "baseline",
         }}
       >
-        <h3>System - General:</h3>
+        <h3>{`General\nSystem\nMetrics:`}</h3>
         {msgsPublished && (
           <h5>{`Total number of messages received: ${msgsPublished.totalMsgs}`}</h5>
         )}
         {msgsDroppedAsUnroutable && (
           <h5>{`Total number of unroutable messages: ${msgsDroppedAsUnroutable.totalMsgs}`}</h5>
         )}
+        {msgsPublished && msgsDroppedAsUnroutable && (
+          <h5>
+            {`Total percentage of received messages that were unroutable: ${
+              (msgsDroppedAsUnroutable.totalMsgs / msgsPublished.totalMsgs) *
+              100
+            }%`}
+          </h5>
+        )}
         {msgsAcknowledged && (
           <h5>{`Total number of messages processed by Filters: ${msgsAcknowledged.totalMsgs}`}</h5>
         )}
+        {msgsPublished && msgsDroppedAsUnroutable && msgsAcknowledged && (
+          <h5>
+            {`Total percentage of routable messages that were acknowledged: ${
+              (msgsAcknowledged.totalMsgs /
+                (msgsPublished.totalMsgs - msgsDroppedAsUnroutable.totalMsgs)) *
+              100
+            }%`}
+          </h5>
+        )}
         {DBdata && (
           <h5>{`Total number of messages inserted to the DB: ${DBdata.totalNumberOfMessages}`}</h5>
+        )}
+        {msgsAcknowledged && DBdata && (
+          <h5>{`Total percentage of acknowledged messages inserted to the DB: ${
+            (DBdata.totalNumberOfMessages / msgsAcknowledged.totalMsgs) * 100
+          }%`}</h5>
         )}
       </div>
     </div>

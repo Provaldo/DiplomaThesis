@@ -72,7 +72,7 @@ consumerProcess = () => {
             // Or, in other words, don't dispatch a new message to a worker until it has
             // processed and acknowledged the previous one. Instead, it will dispatch it
             // to the next worker that is not still busy.
-            channel.prefetch(1);
+            // channel.prefetch(1);
 
             // test
             channel.bindQueue(q.queue, exchange, rmqConfig.RMQ_ROUTING_KEY);

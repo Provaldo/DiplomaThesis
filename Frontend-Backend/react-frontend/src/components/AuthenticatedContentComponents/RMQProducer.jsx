@@ -104,7 +104,7 @@ const RMQProducer = (props) => {
       <div className="form-group">
         <input
           type="text"
-          placeholder="Producer Exchange Name"
+          placeholder="Exchange Name"
           className={classnames("form-control form-control-lg", {
             "is-invalid": errors.rmqProducerExchangeName,
           })}
@@ -121,7 +121,7 @@ const RMQProducer = (props) => {
       <div className="form-group">
         <input
           type="text"
-          placeholder="Producer Message Topic"
+          placeholder="Routing Key - Message Topic"
           className={classnames("form-control form-control-lg", {
             "is-invalid": errors.rmqProducerTopic,
           })}

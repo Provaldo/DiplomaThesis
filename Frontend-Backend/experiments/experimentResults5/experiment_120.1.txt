@@ -1,0 +1,476 @@
+
+########### EXPERIMENT DETAILS ###########n
+Number of consumers:  6
+Requested publish frequency per producer:  70 /s
+Numbers of producers:  8
+Requested total publish frequency:  560
+Observed publish frequency:  91.66666666666667
+Variance of observed publish frequency:  2826.2688888888893
+Standard Deviation of observed publish frequency:  53.16266442616368
+Observed frequency of message delivery to consumers:  92.175
+Observed frequency of message acknowledgement from consumers:  92.17916666666666
+Variance of observed frequency of message acknowledgement from consumers:  2841.9837326388893
+Standard Deviation of observed frequency of message acknowledgement from consumers:  53.31025916874621
+Observed frequency of insert operations to DB:  88.43921568627451
+Variance of observed frequency of insert operations to DB:  3034.9846059207994
+Standard Deviation of observed frequency of insert operations to DB:  55.09069436774962
+
+Expected inserts to the DB: 8 cons * 70 msgs/s * 180 sec = 100800 inserts
+Actual inserts to the DB:  inserts
+
+########### Data sample  1  ###########
+
+ [*] Previous msgsAck value:  1800514
+ [*] Current msgsAck value:  1802346
+ [*] Value difference:  1832
+ [*] MsgsAck rate per second:  122.13333333333334
+ [*] Sample end timestamp:  1631741765000
+
+ [#] Previous msgsDlivrdToCust value:  1850693
+ [#] Current msgsDlivrdToCust value:  1852525
+ [#] Value difference:  1832
+ [#] MsgsDlivrdToCust rate per second:  122.13333333333334
+ [#] Sample end timestamp:  1631741765000
+
+ [$] Previous msgsPublishedToServer value:  1850409
+ [$] Current msgsPublishedToServer value:  1852245
+ [$] Value difference:  1836
+ [$] MsgsPublishedToServer rate per second:  122.4
+ [$] Sample end timestamp:  1631741765000
+
+ [@] Previous insertsToDB value:  1681888
+ [@] Current insertsToDB value:  1683716
+ [@] Value difference:  1828
+ [@] InsertsToDB rate per second:  121.86666666666666
+ [@] Sample end timestamp:  1631741759369
+
+########### Data sample  2  ###########
+
+ [*] Previous msgsAck value:  1802346
+ [*] Current msgsAck value:  1804191
+ [*] Value difference:  1845
+ [*] MsgsAck rate per second:  123
+ [*] Sample end timestamp:  1631741780000
+
+ [#] Previous msgsDlivrdToCust value:  1852525
+ [#] Current msgsDlivrdToCust value:  1854371
+ [#] Value difference:  1846
+ [#] MsgsDlivrdToCust rate per second:  123.06666666666666
+ [#] Sample end timestamp:  1631741780000
+
+ [$] Previous msgsPublishedToServer value:  1852245
+ [$] Current msgsPublishedToServer value:  1854092
+ [$] Value difference:  1847
+ [$] MsgsPublishedToServer rate per second:  123.13333333333334
+ [$] Sample end timestamp:  1631741780000
+
+ [@] Previous insertsToDB value:  1683716
+ [@] Current insertsToDB value:  1685564
+ [@] Value difference:  1848
+ [@] InsertsToDB rate per second:  123.2
+ [@] Sample end timestamp:  1631741774287
+
+########### Data sample  3  ###########
+
+ [*] Previous msgsAck value:  1804191
+ [*] Current msgsAck value:  1806056
+ [*] Value difference:  1865
+ [*] MsgsAck rate per second:  124.33333333333333
+ [*] Sample end timestamp:  1631741795000
+
+ [#] Previous msgsDlivrdToCust value:  1854371
+ [#] Current msgsDlivrdToCust value:  1856236
+ [#] Value difference:  1865
+ [#] MsgsDlivrdToCust rate per second:  124.33333333333333
+ [#] Sample end timestamp:  1631741795000
+
+ [$] Previous msgsPublishedToServer value:  1854092
+ [$] Current msgsPublishedToServer value:  1855954
+ [$] Value difference:  1862
+ [$] MsgsPublishedToServer rate per second:  124.13333333333334
+ [$] Sample end timestamp:  1631741795000
+
+ [@] Previous insertsToDB value:  1685564
+ [@] Current insertsToDB value:  1687425
+ [@] Value difference:  1861
+ [@] InsertsToDB rate per second:  124.06666666666666
+ [@] Sample end timestamp:  1631741789281
+
+########### Data sample  4  ###########
+
+ [*] Previous msgsAck value:  1806056
+ [*] Current msgsAck value:  1807915
+ [*] Value difference:  1859
+ [*] MsgsAck rate per second:  123.93333333333334
+ [*] Sample end timestamp:  1631741810000
+
+ [#] Previous msgsDlivrdToCust value:  1856236
+ [#] Current msgsDlivrdToCust value:  1858096
+ [#] Value difference:  1860
+ [#] MsgsDlivrdToCust rate per second:  124
+ [#] Sample end timestamp:  1631741810000
+
+ [$] Previous msgsPublishedToServer value:  1855954
+ [$] Current msgsPublishedToServer value:  1857815
+ [$] Value difference:  1861
+ [$] MsgsPublishedToServer rate per second:  124.06666666666666
+ [$] Sample end timestamp:  1631741810000
+
+ [@] Previous insertsToDB value:  1687425
+ [@] Current insertsToDB value:  1689288
+ [@] Value difference:  1863
+ [@] InsertsToDB rate per second:  124.2
+ [@] Sample end timestamp:  1631741804306
+
+########### Data sample  5  ###########
+
+ [*] Previous msgsAck value:  1807915
+ [*] Current msgsAck value:  1809781
+ [*] Value difference:  1866
+ [*] MsgsAck rate per second:  124.4
+ [*] Sample end timestamp:  1631741825000
+
+ [#] Previous msgsDlivrdToCust value:  1858096
+ [#] Current msgsDlivrdToCust value:  1859966
+ [#] Value difference:  1870
+ [#] MsgsDlivrdToCust rate per second:  124.66666666666667
+ [#] Sample end timestamp:  1631741825000
+
+ [$] Previous msgsPublishedToServer value:  1857815
+ [$] Current msgsPublishedToServer value:  1859690
+ [$] Value difference:  1875
+ [$] MsgsPublishedToServer rate per second:  125
+ [$] Sample end timestamp:  1631741825000
+
+ [@] Previous insertsToDB value:  1689288
+ [@] Current insertsToDB value:  1691163
+ [@] Value difference:  1875
+ [@] InsertsToDB rate per second:  125
+ [@] Sample end timestamp:  1631741819294
+
+########### Data sample  6  ###########
+
+ [*] Previous msgsAck value:  1809781
+ [*] Current msgsAck value:  1811652
+ [*] Value difference:  1871
+ [*] MsgsAck rate per second:  124.73333333333333
+ [*] Sample end timestamp:  1631741840000
+
+ [#] Previous msgsDlivrdToCust value:  1859966
+ [#] Current msgsDlivrdToCust value:  1861830
+ [#] Value difference:  1864
+ [#] MsgsDlivrdToCust rate per second:  124.26666666666667
+ [#] Sample end timestamp:  1631741840000
+
+ [$] Previous msgsPublishedToServer value:  1859690
+ [$] Current msgsPublishedToServer value:  1861548
+ [$] Value difference:  1858
+ [$] MsgsPublishedToServer rate per second:  123.86666666666666
+ [$] Sample end timestamp:  1631741840000
+
+ [@] Previous insertsToDB value:  1691163
+ [@] Current insertsToDB value:  1693028
+ [@] Value difference:  1865
+ [@] InsertsToDB rate per second:  124.33333333333333
+ [@] Sample end timestamp:  1631741834310
+
+########### Data sample  7  ###########
+
+ [*] Previous msgsAck value:  1811652
+ [*] Current msgsAck value:  1813503
+ [*] Value difference:  1851
+ [*] MsgsAck rate per second:  123.4
+ [*] Sample end timestamp:  1631741855000
+
+ [#] Previous msgsDlivrdToCust value:  1861830
+ [#] Current msgsDlivrdToCust value:  1863681
+ [#] Value difference:  1851
+ [#] MsgsDlivrdToCust rate per second:  123.4
+ [#] Sample end timestamp:  1631741855000
+
+ [$] Previous msgsPublishedToServer value:  1861548
+ [$] Current msgsPublishedToServer value:  1863402
+ [$] Value difference:  1854
+ [$] MsgsPublishedToServer rate per second:  123.6
+ [$] Sample end timestamp:  1631741855000
+
+ [@] Previous insertsToDB value:  1693028
+ [@] Current insertsToDB value:  1694871
+ [@] Value difference:  1843
+ [@] InsertsToDB rate per second:  122.86666666666666
+ [@] Sample end timestamp:  1631741849333
+
+########### Data sample  8  ###########
+
+ [*] Previous msgsAck value:  1813503
+ [*] Current msgsAck value:  1815365
+ [*] Value difference:  1862
+ [*] MsgsAck rate per second:  124.13333333333334
+ [*] Sample end timestamp:  1631741870000
+
+ [#] Previous msgsDlivrdToCust value:  1863681
+ [#] Current msgsDlivrdToCust value:  1865546
+ [#] Value difference:  1865
+ [#] MsgsDlivrdToCust rate per second:  124.33333333333333
+ [#] Sample end timestamp:  1631741870000
+
+ [$] Previous msgsPublishedToServer value:  1863402
+ [$] Current msgsPublishedToServer value:  1865266
+ [$] Value difference:  1864
+ [$] MsgsPublishedToServer rate per second:  124.26666666666667
+ [$] Sample end timestamp:  1631741870000
+
+ [@] Previous insertsToDB value:  1694871
+ [@] Current insertsToDB value:  1696745
+ [@] Value difference:  1874
+ [@] InsertsToDB rate per second:  124.93333333333334
+ [@] Sample end timestamp:  1631741864326
+
+########### Data sample  9  ###########
+
+ [*] Previous msgsAck value:  1815365
+ [*] Current msgsAck value:  1817230
+ [*] Value difference:  1865
+ [*] MsgsAck rate per second:  124.33333333333333
+ [*] Sample end timestamp:  1631741885000
+
+ [#] Previous msgsDlivrdToCust value:  1865546
+ [#] Current msgsDlivrdToCust value:  1867409
+ [#] Value difference:  1863
+ [#] MsgsDlivrdToCust rate per second:  124.2
+ [#] Sample end timestamp:  1631741885000
+
+ [$] Previous msgsPublishedToServer value:  1865266
+ [$] Current msgsPublishedToServer value:  1867128
+ [$] Value difference:  1862
+ [$] MsgsPublishedToServer rate per second:  124.13333333333334
+ [$] Sample end timestamp:  1631741885000
+
+ [@] Previous insertsToDB value:  1696745
+ [@] Current insertsToDB value:  1698595
+ [@] Value difference:  1850
+ [@] InsertsToDB rate per second:  123.33333333333333
+ [@] Sample end timestamp:  1631741879332
+
+########### Data sample  10  ###########
+
+ [*] Previous msgsAck value:  1817230
+ [*] Current msgsAck value:  1819103
+ [*] Value difference:  1873
+ [*] MsgsAck rate per second:  124.86666666666666
+ [*] Sample end timestamp:  1631741900000
+
+ [#] Previous msgsDlivrdToCust value:  1867409
+ [#] Current msgsDlivrdToCust value:  1869282
+ [#] Value difference:  1873
+ [#] MsgsDlivrdToCust rate per second:  124.86666666666666
+ [#] Sample end timestamp:  1631741900000
+
+ [$] Previous msgsPublishedToServer value:  1867128
+ [$] Current msgsPublishedToServer value:  1868999
+ [$] Value difference:  1871
+ [$] MsgsPublishedToServer rate per second:  124.73333333333333
+ [$] Sample end timestamp:  1631741900000
+
+ [@] Previous insertsToDB value:  1698595
+ [@] Current insertsToDB value:  1700473
+ [@] Value difference:  1878
+ [@] InsertsToDB rate per second:  125.2
+ [@] Sample end timestamp:  1631741894338
+
+########### Data sample  11  ###########
+
+ [*] Previous msgsAck value:  1819103
+ [*] Current msgsAck value:  1820968
+ [*] Value difference:  1865
+ [*] MsgsAck rate per second:  124.33333333333333
+ [*] Sample end timestamp:  1631741915000
+
+ [#] Previous msgsDlivrdToCust value:  1869282
+ [#] Current msgsDlivrdToCust value:  1871147
+ [#] Value difference:  1865
+ [#] MsgsDlivrdToCust rate per second:  124.33333333333333
+ [#] Sample end timestamp:  1631741915000
+
+ [$] Previous msgsPublishedToServer value:  1868999
+ [$] Current msgsPublishedToServer value:  1870863
+ [$] Value difference:  1864
+ [$] MsgsPublishedToServer rate per second:  124.26666666666667
+ [$] Sample end timestamp:  1631741915000
+
+ [@] Previous insertsToDB value:  1700473
+ [@] Current insertsToDB value:  1702339
+ [@] Value difference:  1866
+ [@] InsertsToDB rate per second:  124.4
+ [@] Sample end timestamp:  1631741909341
+
+########### Data sample  12  ###########
+
+ [*] Previous msgsAck value:  1820968
+ [*] Current msgsAck value:  1822637
+ [*] Value difference:  1669
+ [*] MsgsAck rate per second:  111.26666666666667
+ [*] Sample end timestamp:  1631741930000
+
+ [#] Previous msgsDlivrdToCust value:  1871147
+ [#] Current msgsDlivrdToCust value:  1872815
+ [#] Value difference:  1668
+ [#] MsgsDlivrdToCust rate per second:  111.2
+ [#] Sample end timestamp:  1631741930000
+
+ [$] Previous msgsPublishedToServer value:  1870863
+ [$] Current msgsPublishedToServer value:  1872409
+ [$] Value difference:  1546
+ [$] MsgsPublishedToServer rate per second:  103.06666666666666
+ [$] Sample end timestamp:  1631741930000
+
+ [@] Previous insertsToDB value:  1702339
+ [@] Current insertsToDB value:  1704194
+ [@] Value difference:  1855
+ [@] InsertsToDB rate per second:  123.66666666666667
+ [@] Sample end timestamp:  1631741924348
+
+########### Data sample  13  ###########
+
+ [*] Previous msgsAck value:  1822637
+ [*] Current msgsAck value:  1822637
+ [*] Value difference:  0
+ [*] MsgsAck rate per second:  0
+ [*] Sample end timestamp:  1631741945000
+
+ [#] Previous msgsDlivrdToCust value:  1872815
+ [#] Current msgsDlivrdToCust value:  1872815
+ [#] Value difference:  0
+ [#] MsgsDlivrdToCust rate per second:  0
+ [#] Sample end timestamp:  1631741945000
+
+ [$] Previous msgsPublishedToServer value:  1872409
+ [$] Current msgsPublishedToServer value:  1872409
+ [$] Value difference:  0
+ [$] MsgsPublishedToServer rate per second:  0
+ [$] Sample end timestamp:  1631741945000
+
+ [@] Previous insertsToDB value:  1704194
+ [@] Current insertsToDB value:  1704440
+ [@] Value difference:  246
+ [@] InsertsToDB rate per second:  16.4
+ [@] Sample end timestamp:  1631741939347
+
+########### Data sample  14  ###########
+
+ [*] Previous msgsAck value:  1822637
+ [*] Current msgsAck value:  1822637
+ [*] Value difference:  0
+ [*] MsgsAck rate per second:  0
+ [*] Sample end timestamp:  1631741960000
+
+ [#] Previous msgsDlivrdToCust value:  1872815
+ [#] Current msgsDlivrdToCust value:  1872815
+ [#] Value difference:  0
+ [#] MsgsDlivrdToCust rate per second:  0
+ [#] Sample end timestamp:  1631741960000
+
+ [$] Previous msgsPublishedToServer value:  1872409
+ [$] Current msgsPublishedToServer value:  1872409
+ [$] Value difference:  0
+ [$] MsgsPublishedToServer rate per second:  0
+ [$] Sample end timestamp:  1631741960000
+
+ [@] Previous insertsToDB value:  1704440
+ [@] Current insertsToDB value:  1704440
+ [@] Value difference:  0
+ [@] InsertsToDB rate per second:  0
+ [@] Sample end timestamp:  1631741954358
+
+########### Data sample  15  ###########
+
+ [*] Previous msgsAck value:  1822637
+ [*] Current msgsAck value:  1822637
+ [*] Value difference:  0
+ [*] MsgsAck rate per second:  0
+ [*] Sample end timestamp:  1631741975000
+
+ [#] Previous msgsDlivrdToCust value:  1872815
+ [#] Current msgsDlivrdToCust value:  1872815
+ [#] Value difference:  0
+ [#] MsgsDlivrdToCust rate per second:  0
+ [#] Sample end timestamp:  1631741975000
+
+ [$] Previous msgsPublishedToServer value:  1872409
+ [$] Current msgsPublishedToServer value:  1872409
+ [$] Value difference:  0
+ [$] MsgsPublishedToServer rate per second:  0
+ [$] Sample end timestamp:  1631741975000
+
+ [@] Previous insertsToDB value:  1704440
+ [@] Current insertsToDB value:  1704440
+ [@] Value difference:  0
+ [@] InsertsToDB rate per second:  0
+ [@] Sample end timestamp:  1631741969361
+
+########### Data sample  16  ###########
+
+ [*] Previous msgsAck value:  1822637
+ [*] Current msgsAck value:  1822637
+ [*] Value difference:  0
+ [*] MsgsAck rate per second:  0
+ [*] Sample end timestamp:  1631741990000
+
+ [#] Previous msgsDlivrdToCust value:  1872815
+ [#] Current msgsDlivrdToCust value:  1872815
+ [#] Value difference:  0
+ [#] MsgsDlivrdToCust rate per second:  0
+ [#] Sample end timestamp:  1631741990000
+
+ [$] Previous msgsPublishedToServer value:  1872409
+ [$] Current msgsPublishedToServer value:  1872409
+ [$] Value difference:  0
+ [$] MsgsPublishedToServer rate per second:  0
+ [$] Sample end timestamp:  1631741990000
+
+ [@] Previous insertsToDB value:  1704440
+ [@] Current insertsToDB value:  1704440
+ [@] Value difference:  0
+ [@] InsertsToDB rate per second:  0
+ [@] Sample end timestamp:  1631741984368
+
+Input_Frequency;Consuming_Frequency;DB_Insert_Frequency;Avg_Input_Frequency;Input_Frequency_Variance;Input_Frequency_Std_Dev;Avg_Consuming_Frequency;Consuming_Frequency_Variance;Consuming_Frequency_Std_Dev;Avg_DB_Insert_Frequency;DB_Insert_Frequency_Variance;DB_Insert_Frequency_Std_Dev
+122.4 ; 122.13333333333334 ; 121.86666666666666 ; 91.66666666666667 ; 2826.2688888888893 ; 53.16266442616368 ; 92.17916666666666 ; 2841.9837326388893 ; 53.31025916874621 ; 88.43921568627451 ; 3034.9846059207994 ; 55.09069436774962
+123.13333333333334 ; 123 ; 123.2 ;;;;;;;;;
+124.13333333333334 ; 124.33333333333333 ; 124.06666666666666 ;;;;;;;;;
+124.06666666666666 ; 123.93333333333334 ; 124.2 ;;;;;;;;;
+125 ; 124.4 ; 125 ;;;;;;;;;
+123.86666666666666 ; 124.73333333333333 ; 124.33333333333333 ;;;;;;;;;
+123.6 ; 123.4 ; 122.86666666666666 ;;;;;;;;;
+124.26666666666667 ; 124.13333333333334 ; 124.93333333333334 ;;;;;;;;;
+124.13333333333334 ; 124.33333333333333 ; 123.33333333333333 ;;;;;;;;;
+124.73333333333333 ; 124.86666666666666 ; 125.2 ;;;;;;;;;
+124.26666666666667 ; 124.33333333333333 ; 124.4 ;;;;;;;;;
+103.06666666666666 ; 111.26666666666667 ; 123.66666666666667 ;;;;;;;;;
+0 ; 0 ; 16.4 ;;;;;;;;;
+0 ; 0 ; 0 ;;;;;;;;;
+0 ; 0 ; 0 ;;;;;;;;;
+0 ; 0 ; 0 ;;;;;;;;;
+
+####### Overview #######
+
+OverviewData:  {
+  bytesOfMsgsInQueues: 0,
+  msgsAcknowledged: {
+    avgRate: 92.17916666666666,
+    rateVariance: 2841.9837326388893,
+    stdDev: 53.31025916874621
+  },
+  msgsDeliveredToConsumers: { avgRate: 92.175 },
+  msgsPublished: {
+    avgRate: 91.66666666666667,
+    rateVariance: 2826.2688888888893,
+    stdDev: 53.16266442616368
+  },
+  msgsInQueues: { totalMsgs: 0, avgValue: 1, avgRate: -0.004166666666666667 },
+  numberOfConsumers: 6,
+  numberOfExchanges: 1,
+  numberOfQueues: 1,
+  avgInsertRateToDBperSecond: 88.43921568627451,
+  insertRateToDBperSecondVariance: 3034.9846059207994
+}

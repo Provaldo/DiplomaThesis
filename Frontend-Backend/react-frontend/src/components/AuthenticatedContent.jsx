@@ -26,7 +26,7 @@ const AuthenticatedContent = (props) => {
     "Overview",
     "Message Broker",
     "Filters",
-    "Producers",
+    "Test Producer",
   ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
@@ -71,36 +71,6 @@ const AuthenticatedContent = (props) => {
   //     props.history.push("/login");
   //   }
   // }, [props.auth.isAuthenticated, props.history]);
-
-  const startWebSocketConnection = () => {
-    let socket = new WebSocket(`ws://backend-service-ws/overview/`);
-
-    socket.onopen = (e) => {
-      alert("[open] Connection established");
-      alert("Sending to server");
-      socket.send("My name is John");
-    };
-
-    socket.onmessage = function (event) {
-      alert(`[message] Data received from server: ${event.data}`);
-    };
-
-    socket.onclose = function (event) {
-      if (event.wasClean) {
-        alert(
-          `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
-        );
-      } else {
-        // e.g. server process killed or network down
-        // event.code is usually 1006 in this case
-        alert("[close] Connection died");
-      }
-    };
-
-    socket.onerror = function (error) {
-      alert(`[error] ${error.message}`);
-    };
-  };
 
   const { username, email, roles, rabbitmqServer } = props.auth.user;
 
@@ -155,7 +125,9 @@ const AuthenticatedContent = (props) => {
         {activeTab == "Overview" && <Overview />}
         {activeTab == "Message Broker" && <RMQServer />}
         {activeTab == "Filters" && state.rmqServerExists && <RMQConsumers />}
-        {activeTab == "Producers" && state.rmqServerExists && <RMQProducer />}
+        {activeTab == "Test Producer" && state.rmqServerExists && (
+          <RMQProducer />
+        )}
 
         {props.rabbitmq.message && <h6>{props.rabbitmq.message}</h6>}
         {errors.message && <h6>{errors.message}</h6>}

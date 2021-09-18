@@ -193,7 +193,7 @@ const RMQConsumers = (props) => {
         <div className="form-group">
           <input
             type="text"
-            placeholder="Consumer Name"
+            placeholder="Filter Name"
             className={classnames("form-control form-control-lg", {
               "is-invalid": errors.rmqConsumerName,
             })}
@@ -238,7 +238,7 @@ const RMQConsumers = (props) => {
         <div className="form-group">
           <input
             type="text"
-            placeholder="Routing Key"
+            placeholder="Binding Key"
             className={classnames("form-control form-control-lg", {
               "is-invalid": errors.rmqRoutingKey,
             })}
@@ -264,7 +264,7 @@ const RMQConsumers = (props) => {
               </div>
             );
           })}
-        <h6>Log messages to the DB when:</h6>
+        <h6>{`Log messages to the DB when the\nfollowing condition is met:`}</h6>
         <div className="form-group">
           <input
             type="text"
@@ -293,6 +293,7 @@ const RMQConsumers = (props) => {
             options={operatorOptions}
             onChange={handleSelectChange}
             value={state.rmqLoggingConditionsOperator}
+            placeholder="Operator"
           />
           {errors.rmqLoggingConditionsOperator && (
             <div className="invalid-feedback">
@@ -364,7 +365,7 @@ const RMQConsumers = (props) => {
               ) // Typecast the variable to Boolean, where str is a variable. It returns false for null, undefined, 0, 000, "", false. It returns true for string "0" and whitespace " ".
             }
           >
-            Create Consumer
+            Create Filter
           </button>
         </div>
       </form>

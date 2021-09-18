@@ -1,0 +1,27 @@
+Skata synchronization DB me RMQ samples
+
+Skata synchronization sta genika peiramata afxomeiwsis consumers / input frequency
+
+Skata prefetch
+
+Skata message length
+
+Skata producer frequency
+
+Skata ECONNRESET kai ETIMEOUT kai no ping 192.168.49.2
+
+Skata Consumer Acks
+
+
+anaptyxi cloud development
+message brokers technologies - used for high bandwidth messaging
+software automation - mixanismos mesw mias formas sto frontend -> backend -> cloud
+low code development (model driven technikes) gia ipsilou epipedou leitourgies 
+
+no-code development
+
+na orisw tous users tou sistimatos mou oti einai sigkekrimenis texnikis katartisis
+(citizen developers) developers pou den xeroun kapoio sygkekrimeno domain -> se ekeino to doain einai citizen developers. 
+afti tin aneparkeia mporei na tin kripsei mia DSL.
+
+alliws ylopoiisi default values

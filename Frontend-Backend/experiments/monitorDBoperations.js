@@ -8,14 +8,14 @@ const dataIntervalsInSecs = "15";
 const experimentDuration = 180;
 
 const msgPublishRate = 70;
-const nrOfProducers = 8;
+const nrOfProducers = 6;
 
-const consumerCPU = "1000m";
-const consumerMEM = "128Mi";
+const consumerCPU = "ulimited";
+const consumerMEM = "unlimited";
 const RMQServerCPU = "unlimited"; // "1000m";
 const RMQServerMEM = "unlimited"; // "256Mi";
-const dbCPU = "500m";
-const dbMEM = "256Mi";
+const dbCPU = "unlimited";
+const dbMEM = "unlimited";
 const containerResources = {
   consumerCPU,
   consumerMEM,
@@ -27,7 +27,7 @@ const containerResources = {
 
 // const databaseService = "10.97.3.119";
 const dbIP = "192.168.49.2";
-const dbPort = "32223";
+const dbPort = "31054";
 const dbUsername = "username";
 const dbPassword = "password";
 
@@ -35,11 +35,11 @@ const user = "mple";
 const pass = "123456";
 
 const RMQServerIP = "192.168.49.2";
-const RMQServerPort = "30146";
+const RMQServerPort = "31812";
 
 const config = { user, pass, RMQServerIP, RMQServerPort };
 
-const getDBdata = (db, dbSamples, loopsRemaining, previousInsertsValue) => {
+getDBdata = (db, dbSamples, loopsRemaining, previousInsertsValue) => {
   if (loopsRemaining > 0) {
     let sample = {};
     db.db.command({ serverStatus: 1 }, function (err, result) {
@@ -85,16 +85,17 @@ const getDBdata = (db, dbSamples, loopsRemaining, previousInsertsValue) => {
     //   "\n [***] Average insert rate to DB per second: ",
     //   avgInsertRateToDBperSecond
     // );
-    let insertRateToDBVariance = 0;
+
+    let insertRateToDBperSecondVariance = 0;
     for (let i = 0; i < dbSamples.length; i++) {
-      insertRateToDBVariance += Math.pow(
-        avgInsertRateToDB - dbSamples[i].insertValueDifference,
+      insertRateToDBperSecondVariance += Math.pow(
+        avgInsertRateToDBperSecond -
+          dbSamples[i].insertValueDifference / dataIntervalsInSecs,
         2
       );
     }
-    insertRateToDBVariance = insertRateToDBVariance / dbSamples.length;
-    let insertRateToDBperSecondVariance =
-      insertRateToDBVariance / dataIntervalsInSecs;
+    insertRateToDBperSecondVariance =
+      insertRateToDBperSecondVariance / dbSamples.length;
 
     RMQServerData.getRMQdata(
       config,
@@ -112,7 +113,7 @@ const getDBdata = (db, dbSamples, loopsRemaining, previousInsertsValue) => {
   }
 };
 
-const main = () => {
+exports.main = () => {
   mongoose
     .connect(
       //   `mongodb://username:password@${databaseService}:27017/mple?authSource=admin&w=1`
@@ -142,8 +143,8 @@ const main = () => {
   db.on("error", console.error.bind(console, "connection error:"));
 
   let dbSamples = [];
-  // let loopsRemaining = dataTimeframeInSecs / dataIntervalsInSecs + 1;
-  let loopsRemaining = dataTimeframeInSecs / dataIntervalsInSecs + 2;
+  let loopsRemaining = dataTimeframeInSecs / dataIntervalsInSecs + 1;
+  // let loopsRemaining = dataTimeframeInSecs / dataIntervalsInSecs + 2;
 
   db.once("open", function () {
     // db.db.stats(function (err, stats) {
@@ -162,4 +163,4 @@ const main = () => {
   //   });
 };
 
-main();
+// main();

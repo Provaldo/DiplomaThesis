@@ -116,19 +116,20 @@ exports.getRMQdata = async (
             json.message_stats.ack != undefined &&
             json.message_stats.ack_details != undefined
           ) {
-            let msgsAcknowledgedVariance = 0;
+            let msgsAcknowledgedperSecondVariance = 0;
             let samples = json.message_stats.ack_details.samples;
             let avg = json.message_stats.ack_details.avg_rate;
 
             for (let i = 1; i < samples.length; i++) {
-              let samplesDifference = samples[i - 1] - samples[i];
+              let samplesDifference = samples[i - 1].sample - samples[i].sample;
 
-              msgsAcknowledgedVariance += Math.pow(avg - samplesDifference, 2);
+              msgsAcknowledgedperSecondVariance += Math.pow(
+                avg - samplesDifference / dataIntervalsInSecs,
+                2
+              );
             }
-            msgsAcknowledgedVariance =
-              msgsAcknowledgedVariance / (samples.length - 1);
-            let msgsAcknowledgedperSecondVariance =
-              msgsAcknowledgedVariance / dataIntervalsInSecs;
+            msgsAcknowledgedperSecondVariance =
+              msgsAcknowledgedperSecondVariance / (samples.length - 1);
 
             overviewData.msgsAcknowledged = {
               //   totalMsgs: json.message_stats.ack,
@@ -136,6 +137,7 @@ exports.getRMQdata = async (
               avgRate: json.message_stats.ack_details.avg_rate,
               samples: json.message_stats.ack_details.samples,
               rateVariance: msgsAcknowledgedperSecondVariance,
+              stdDev: Math.sqrt(msgsAcknowledgedperSecondVariance),
             };
             //   } else if (json.message_stats.ack != undefined) {
             //     overviewData.msgsAcknowledged = {
@@ -169,19 +171,20 @@ exports.getRMQdata = async (
             json.message_stats.publish != undefined &&
             json.message_stats.publish_details != undefined
           ) {
-            let msgsPublishedVariance = 0;
+            let msgsPublishedPerSecondVariance = 0;
             let samples = json.message_stats.publish_details.samples;
             let avg = json.message_stats.publish_details.avg_rate;
 
             for (let i = 1; i < samples.length; i++) {
-              let samplesDifference = samples[i - 1] - samples[i];
+              let samplesDifference = samples[i - 1].sample - samples[i].sample;
 
-              msgsPublishedVariance += Math.pow(avg - samplesDifference, 2);
+              msgsPublishedPerSecondVariance += Math.pow(
+                avg - samplesDifference / dataIntervalsInSecs,
+                2
+              );
             }
-            msgsPublishedVariance =
-              msgsPublishedVariance / (samples.length - 1);
-            let msgsPublishedPerSecondVariance =
-              msgsPublishedVariance / dataIntervalsInSecs;
+            msgsPublishedPerSecondVariance =
+              msgsPublishedPerSecondVariance / (samples.length - 1);
 
             overviewData.msgsPublished = {
               //   totalMsgs: json.message_stats.publish,
@@ -189,6 +192,7 @@ exports.getRMQdata = async (
               avgRate: json.message_stats.publish_details.avg_rate,
               samples: json.message_stats.publish_details.samples,
               rateVariance: msgsPublishedPerSecondVariance,
+              stdDev: Math.sqrt(msgsPublishedPerSecondVariance),
             };
             //   } else if (json.message_stats.publish != undefined) {
             //     overviewData.msgsPublished = {
@@ -268,6 +272,10 @@ exports.getRMQdata = async (
     overviewData.msgsPublished.rateVariance
   );
   console.log(
+    "Standard Deviation of observed publish frequency: ",
+    overviewData.msgsPublished.stdDev
+  );
+  console.log(
     "Observed frequency of message delivery to consumers: ",
     overviewData.msgsDeliveredToConsumers.avgRate
   );
@@ -280,12 +288,20 @@ exports.getRMQdata = async (
     overviewData.msgsAcknowledged.rateVariance
   );
   console.log(
+    "Standard Deviation of observed frequency of message acknowledgement from consumers: ",
+    overviewData.msgsAcknowledged.stdDev
+  );
+  console.log(
     "Observed frequency of insert operations to DB: ",
     avgInsertRateToDBperSecond
   );
   console.log(
     "Variance of observed frequency of insert operations to DB: ",
     insertRateToDBperSecondVariance
+  );
+  console.log(
+    "Standard Deviation of observed frequency of insert operations to DB: ",
+    Math.sqrt(insertRateToDBperSecondVariance)
   );
   let expectedInserts = nrOfProducers * msgPublishRate * experimentDuration;
   console.log(
@@ -319,17 +335,20 @@ exports.getRMQdata = async (
   csvData.inputFrequency = {};
   csvData.inputFrequency.average = overviewData.msgsPublished.avgRate;
   csvData.inputFrequency.variance = overviewData.msgsPublished.rateVariance;
+  csvData.inputFrequency.stdDev = overviewData.msgsPublished.stdDev;
   csvData.inputFrequency.rateSamples = [];
 
   csvData.consumingFrequency = {};
   csvData.consumingFrequency.average = overviewData.msgsAcknowledged.avgRate;
   csvData.consumingFrequency.variance =
     overviewData.msgsAcknowledged.rateVariance;
+  csvData.consumingFrequency.stdDev = overviewData.msgsAcknowledged.stdDev;
   csvData.consumingFrequency.rateSamples = [];
 
   csvData.dbInsertFrequency = {};
   csvData.dbInsertFrequency.average = avgInsertRateToDBperSecond;
   csvData.dbInsertFrequency.variance = insertRateToDBperSecondVariance;
+  csvData.dbInsertFrequency.stdDev = Math.sqrt(insertRateToDBperSecondVariance);
   csvData.dbInsertFrequency.rateSamples = [];
 
   if (overviewData.msgsAcknowledged.samples != undefined) {
@@ -398,9 +417,9 @@ exports.getRMQdata = async (
         (currentValue - previousValue) / dataIntervalsInSecs
       );
 
-      // let normalIndex =
-      //   overviewData.msgsAcknowledged.samples.length - index - 1;
-      let normalIndex = overviewData.msgsAcknowledged.samples.length - index;
+      let normalIndex =
+        overviewData.msgsAcknowledged.samples.length - index - 1;
+      // let normalIndex = overviewData.msgsAcknowledged.samples.length - index;
       console.log(
         "\n [@] Previous insertsToDB value: ",
         dbSamples[normalIndex].previousInsertsValue
