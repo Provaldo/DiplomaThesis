@@ -413,7 +413,7 @@ const RMQConsumers = (props) => {
                     className="btn btn-danger"
                     onClick={() => onRMQConsumerDeletionRequest(consumer.name)}
                   >
-                    Delete Consumer
+                    Delete Filter
                   </button>
                 </div>
               );

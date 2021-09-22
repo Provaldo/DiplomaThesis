@@ -1,4 +1,4 @@
-Skata synchronization DB me RMQ samples
+Skata synchronization DB me RMQ samples - diorthothike me timestamp synchronization
 
 Skata synchronization sta genika peiramata afxomeiwsis consumers / input frequency
 
