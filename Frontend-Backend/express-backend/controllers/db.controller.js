@@ -2,7 +2,7 @@ const MongoClient = require("mongodb").MongoClient;
 const db = require("../models");
 const User = db.user;
 const test = require("assert");
-
+const mongoose = require("mongoose");
 const dbConfig = require("../config/db.config");
 
 exports.signup = (req, res, next) => {
@@ -209,6 +209,129 @@ exports.updateOverviewDataOnDB = (userId, overviewData) => {
       }
     }
   );
+};
+
+// exports.getConsumerAcceptedMessages2 = (req, res) => {
+//   const url = `mongodb://${dbConfig.DB_USERNAME}:${dbConfig.DB_PASSWORD}@${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/`;
+
+//   MongoClient.connect(
+//     url,
+//     {
+//       useUnifiedTopology: true,
+//     },
+//     function (err, client) {
+//       if (err) {
+//         res.status(500).send({ message: err });
+//         console.log("Connection error", err);
+//         // ProcessingInstruction.exit(); // I don't know what this does
+//         return;
+//       }
+//       // { consumerName: req.body.consumerName }
+
+//       // let collection = db.collection("messages");
+
+//       client
+//         .db(req.body.username)
+//         .collection("messages")
+//         .find({ consumerName: req.body.consumerName })
+//         .toArray((err, result) => {
+//           if (err) {
+//             // res.status(500).send({ message: err });
+//             console.log(
+//               `DB error while getting consumer ${req.body.consumerName} messages `,
+//               err
+//             );
+//             // ProcessingInstruction.exit(); // I don't know what this does
+//             return;
+//           } else {
+//             console.log(
+//               `DB function successfull. Messages of consumer ${req.body.consumerName} returned`,
+//               result
+//             );
+//             res.status(200).send({
+//               message: `DB function successfull. Messages of consumer ${req.body.consumerName} returned`,
+//               messages: result,
+//             });
+//           }
+
+//           client.close();
+//         });
+//     }
+//   );
+// };
+
+exports.getConsumerAcceptedMessages = async (req, res) => {
+  const conn = await mongoose.createConnection(
+    `mongodb://${dbConfig.DB_SERVER}:${dbConfig.DB_PORT}/${req.user.username}`, // Afto leitourgei stin ylopoihsh tis DB eite ws Deployment, eite ws StatefulSet. Apla prepei na allazei to mongo-configmap.yaml
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      auth: { authSource: "admin" },
+      user: dbConfig.DB_USERNAME,
+      pass: dbConfig.DB_PASSWORD,
+    }
+  );
+  // .then(() => {
+  //   console.log(
+  //     "Successfully connect to MongoDB, database: ",
+  //     req.user.username
+  //   );
+  // })
+  // .catch((err) => {
+  //   console.error("Connection error", err);
+  //   res.status(500).send({ message: "DB Connection error" });
+  // });
+
+  const Message = conn.model(
+    "Message",
+    new mongoose.Schema(
+      {
+        consumerName: String,
+        exchangeName: String,
+        queueName: String,
+        content: Object,
+        serialNumber: Number,
+        routingKey: String,
+        bindingKey: String,
+        producedAt: Number,
+        receivedAt: Number,
+        conditionMet: Object,
+      },
+      {
+        timestamps: true,
+      }
+    )
+  );
+
+  await Message.find({ consumerName: req.body.consumerName }, (err, docs) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      console.log(
+        `DB error while getting consumer ${req.body.consumerName} messages `,
+        err
+      );
+      // ProcessingInstruction.exit(); // I don't know what this does
+      return;
+    } else {
+      // console.log(
+      //   `DB function successfull. Messages of consumer ${req.body.consumerName} returned`,
+      //   docs
+      // );
+      res.status(200).send({
+        message: `DB function successfull. Messages of consumer ${req.body.consumerName} returned`,
+        messages: docs,
+      });
+    }
+  });
+
+  conn
+    .close()
+    .then(() => {
+      console.log("Connection was closed grafecully");
+    })
+    .catch((err) => {
+      console.log("Woops, a wild error has appeared: ", err);
+    });
 };
 
 // exports.test = (req, res) => {

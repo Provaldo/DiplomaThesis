@@ -12,6 +12,8 @@ import {
   CREATE_PRODUCER,
   START_OVERVIEW_STREAM,
   GET_STREAM_DATA,
+  GET_CONSUMER_ACCEPTED_MESSAGES,
+  DELETE_CONSUMER_ACCEPTED_MESSAGES,
 } from "./types";
 
 export const createRMQServer = (serverData) => (dispatch) => {
@@ -242,4 +244,46 @@ export const setOverviewTimings = (timings) => (dispatch) => {
         payload: err.response.data,
       });
     });
+};
+
+export const getConsumerAcceptedMessages = (consumerData) => (dispatch) => {
+  dispatch({
+    type: CLEAR_RMQ_MESSAGES,
+  });
+  dispatch({
+    type: CLEAR_ERRORS,
+  });
+
+  axios
+    .post("/api/rabbitmq/user/requestConsumerAcceptedMessages", consumerData)
+    .then((res) => {
+      dispatch({
+        type: GET_CONSUMER_ACCEPTED_MESSAGES,
+        payload: res.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      });
+      if (
+        err.response.data.message &&
+        err.response.data.message === "No valid session exists!"
+      ) {
+        dispatch({ type: LOGOUT_CURRENT_USER });
+      }
+      dispatch({
+        type: CLEAR_RMQ_MESSAGES,
+      });
+    });
+};
+
+export const deleteConsumerAcceptedMessages = () => (dispatch) => {
+  dispatch({
+    type: CLEAR_ERRORS,
+  });
+  dispatch({
+    type: DELETE_CONSUMER_ACCEPTED_MESSAGES,
+  });
 };

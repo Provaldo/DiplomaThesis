@@ -70,7 +70,7 @@ exports.validateRMQConsumerRequestInput = (req, res, next) => {
       "Consumer Name must contain only lowercase characters (don't hate me hate rabbitmq. jk blame me)";
   }
 
-  if (!Validator.isLength(data.rmqConsumerName, { min: 2, max: 10 })) {
+  if (!Validator.isLength(data.rmqConsumerName, { min: 2, max: 20 })) {
     errors.rmqConsumerName = "Consumer Name must be between 2 to 10 chars";
   }
 

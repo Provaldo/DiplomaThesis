@@ -9,7 +9,8 @@ exports.recordMessage = (condition, msg) => {
     queueName: rmqConfig.RMQ_QUEUE_NAME,
     content: JSON.parse(msg.content.toString()),
     serialNumber: msg.fields.deliveryTag,
-    topic: rmqConfig.RMQ_ROUTING_KEY, // THIS COULD BE REPLACED BY SOMETHING ELSE THAT WOULD LOG THE ACTUAL TOPIC OF THE SENT MESSAGE AND NOT THE ROUTING KEY
+    routingKey: msg.fields.routingKey,
+    bindingKey: rmqConfig.RMQ_ROUTING_KEY,
     producedAt: msg.properties.timestamp,
     receivedAt: Date.now(),
     conditionMet: condition,

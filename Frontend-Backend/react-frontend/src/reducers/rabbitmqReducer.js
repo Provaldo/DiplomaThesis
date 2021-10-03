@@ -9,6 +9,8 @@ import {
   CREATE_PRODUCER,
   START_OVERVIEW_STREAM,
   GET_STREAM_DATA,
+  GET_CONSUMER_ACCEPTED_MESSAGES,
+  DELETE_CONSUMER_ACCEPTED_MESSAGES,
 } from "../actions/types";
 
 const _nullOverview = {
@@ -20,6 +22,7 @@ const _nullOverview = {
 const initialState = {
   // streamEvents: null,
   // overview: _nullOverview,
+  messages: [],
 };
 
 export default (function (state = initialState, { type, payload }) {
@@ -34,6 +37,16 @@ export default (function (state = initialState, { type, payload }) {
       return {
         ...state,
         message: payload.message,
+      };
+    case GET_CONSUMER_ACCEPTED_MESSAGES:
+      return {
+        ...state,
+        messages: payload.messages,
+      };
+    case DELETE_CONSUMER_ACCEPTED_MESSAGES:
+      return {
+        ...state,
+        messages: [],
       };
     case SET_CURRENT_USER:
     case CLEAR_RMQ_MESSAGES:

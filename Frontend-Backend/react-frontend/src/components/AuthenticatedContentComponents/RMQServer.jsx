@@ -106,7 +106,9 @@ const RMQServer = (props) => {
           </h5>
           <h5>{`Name: ${rabbitmqServer.deploymentName}`}</h5>
           <h5>
-            {`Created on: ${Date(rabbitmqServer.creationTimestamp).toString()}`}
+            {`Created on: ${new Date(
+              rabbitmqServer.creationTimestamp
+            ).toLocaleString()}`}
           </h5>
           {/* <div>
         {state.rmqServerExists &&

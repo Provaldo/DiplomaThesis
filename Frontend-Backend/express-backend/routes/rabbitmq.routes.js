@@ -73,4 +73,10 @@ module.exports = function (app) {
     [authSession.verifySession],
     rmqOverview.setOverviewTimings
   );
+
+  app.post(
+    "/api/rabbitmq/user/requestConsumerAcceptedMessages",
+    authSession.verifySession,
+    dbController.getConsumerAcceptedMessages
+  );
 };

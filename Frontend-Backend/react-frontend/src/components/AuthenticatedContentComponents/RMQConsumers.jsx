@@ -2,9 +2,15 @@ import React, { useState, useRef, useEffect } from "react";
 import "../components.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { createConsumer, deleteConsumer } from "../../actions/rabbitmq.actions";
+import {
+  createConsumer,
+  deleteConsumer,
+  getConsumerAcceptedMessages,
+  deleteConsumerAcceptedMessages,
+} from "../../actions/rabbitmq.actions";
 import classnames from "classnames";
 import Select from "react-select";
+import ConsumerMessagesModal from "./ConsumerMessagesModal";
 
 const operatorOptions = [
   { value: "=", label: "=" },
@@ -29,7 +35,27 @@ const RMQConsumers = (props) => {
     rmqLoggingConditions: [],
     consumerPassword: "",
     errors: {},
+    showModal: false,
   });
+
+  const showModal = () => {
+    setState((s) => {
+      return { ...s, showModal: true };
+    });
+  };
+
+  const closeModal = () => {
+    setState((s) => {
+      return { ...s, showModal: false };
+    });
+    props.deleteConsumerAcceptedMessages();
+  };
+
+  const onMessagesAcceptedByConsumerRequest = (consumerName) => {
+    let consumerData = { consumerName };
+    props.getConsumerAcceptedMessages(consumerData);
+    showModal();
+  };
 
   const customStyles = {
     option: (provided, state) => ({
@@ -393,8 +419,8 @@ const RMQConsumers = (props) => {
           {state.rmqConsumerExists &&
             consumers.map((consumer) => {
               return (
-                <div style={{ marginRight: 20 }}>
-                  <h4>{`- Name: ${consumer.name}`}</h4>
+                <div style={{ marginRight: 15, marginTop: 10 }}>
+                  <h3>{`- Name: ${consumer.name}`}</h3>
                   <ul>
                     <li>{`Exchange name: ${consumer.exchangeName}`}</li>
                     <li>{`Queue name: ${consumer.queueName}`}</li>
@@ -407,19 +433,43 @@ const RMQConsumers = (props) => {
                         );
                       })}
                     </li>
-                    <li>{`Created at: ${consumer.creationTimestamp}`}</li>
+                    <li>{`Created at: ${new Date(
+                      consumer.creationTimestamp
+                    ).toLocaleString()}`}</li>
                   </ul>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => onRMQConsumerDeletionRequest(consumer.name)}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-evenly",
+                      width: "100%",
+                    }}
                   >
-                    Delete Filter
-                  </button>
+                    <button
+                      onClick={() => {
+                        onMessagesAcceptedByConsumerRequest(consumer.name);
+                      }}
+                      className="btn btn-success"
+                      // onClick={showModal}
+                    >
+                      {" "}
+                      Show messages accepted by the Filter{" "}
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() =>
+                        onRMQConsumerDeletionRequest(consumer.name)
+                      }
+                    >
+                      Delete Filter
+                    </button>
+                  </div>
                 </div>
               );
             })}
         </div>
       </div>
+      {state.showModal && <ConsumerMessagesModal closeModal={closeModal} />}
     </div>
   );
 };
@@ -429,6 +479,8 @@ RMQConsumers.propTypes = {
   errors: PropTypes.object.isRequired,
   createConsumer: PropTypes.func.isRequired,
   deleteConsumer: PropTypes.func.isRequired,
+  getConsumerAcceptedMessages: PropTypes.func.isRequired,
+  deleteConsumerAcceptedMessages: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -440,4 +492,6 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   createConsumer,
   deleteConsumer,
+  getConsumerAcceptedMessages,
+  deleteConsumerAcceptedMessages,
 })(RMQConsumers);

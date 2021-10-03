@@ -81,7 +81,7 @@ consumerProcess = () => {
               q.queue,
               function (msg) {
                 // console.log(" [x] Received %s", msg.content.toString());
-                // console.log("Message object is: ", msg);
+                console.log("Message object is: ", msg);
                 // console.log(
                 //   "Message content is: ",
                 //   JSON.parse(msg.content.toString())
