@@ -25,6 +25,7 @@ The users' info as well as the messages that are deemed important are saved to a
 - [Overview](#overview)
 - [Table of contents](#table-of-contents)
 - [List of features](#list-of-features)
+- [Requirements](#requirements)
 - [Installation directions](#installation-directions)
 - [Platform setup](#platform-setup)
 - [Footer](#footer)
@@ -35,6 +36,10 @@ The users' info as well as the messages that are deemed important are saved to a
     - [Adding new features or fixing bugs](#adding-new-features-or-fixing-bugs)
 - [License](#license)
 -->
+
+## Requirements
+
+This project was developed in a machine operating on Ubuntu OS, making use of Linux containers. For compatibility reasons it should be run on similar environments.
 
 ## List of features
 
