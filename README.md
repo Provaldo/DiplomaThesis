@@ -27,6 +27,7 @@ The users' info as well as the messages that are deemed important are saved to a
 - [List of features](#list-of-features)
 - [Installation directions](#installation-directions)
 - [Platform setup](#platform-setup)
+- [Footer](#footer)
 <!--
 - [Development](#development)
 - [Contribute](#contribute)
@@ -34,7 +35,6 @@ The users' info as well as the messages that are deemed important are saved to a
     - [Adding new features or fixing bugs](#adding-new-features-or-fixing-bugs)
 - [License](#license)
 -->
-- [Footer](#footer)
 
 ## List of features
 
