@@ -19,8 +19,6 @@ The web app that was produced, is set up in a local Kubernetes environment creat
 
 The users' info as well as the messages that are deemed important are saved to a MongoDB Database.
 
-![Footer](https://github.com/navendu-pottekkat/awesome-readme/blob/master/fooooooter.png)
-
 ## Table of contents
 
 - [Project Title](#project-title)
